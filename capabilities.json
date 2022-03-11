@@ -1,0 +1,238 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Date",
+            "name": "date",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "1 Left 1",
+            "name": "1-left-1",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "1 Left 2",
+            "name": "1-left-2",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "1 Right 1",
+            "name": "1-right-1",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "1 Right 2",
+            "name": "1-right-2",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "2 Left 1",
+            "name": "2-left-1",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "2 Left 2",
+            "name": "2-left-2",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "2 Right 1",
+            "name": "2-right-1",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "2 Right 2",
+            "name": "2-right-2",
+            "kind": "Measure"
+        }
+    ],
+    "objects": {
+        "panel1": {
+            "displayName": "Panel 1",
+            "properties": {
+                "left1Color": {
+                    "displayName": "Left 1 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "left2Color": {
+                    "displayName": "Left 2 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "right1Color": {
+                    "displayName": "Right 1 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "right2Color": {
+                    "displayName": "Right 2 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "panel2": {
+            "displayName": "Panel 2",
+            "properties": {
+                "left1Color": {
+                    "displayName": "Left 1 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "left2Color": {
+                    "displayName": "Left 2 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "right1Color": {
+                    "displayName": "Right 1 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "right2Color": {
+                    "displayName": "Right 2 Color",
+                    "description": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "date": {
+                        "max": 1
+                    },
+                    "1-left-1": {
+                        "max": 1
+                    },
+                    "1-left-2": {
+                        "max": 1
+                    },
+                    "1-right-1": {
+                        "max": 1
+                    },
+                    "1-right-2": {
+                        "max": 1
+                    },
+                    "2-left-1": {
+                        "max": 1
+                    },
+                    "2-left-2": {
+                        "max": 1
+                    },
+                    "2-right-1": {
+                        "max": 1
+                    },
+                    "2-right-2": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "date"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "1-left-1"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "1-left-2"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "1-right-1"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "1-right-2"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "2-left-1"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "2-left-2"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "2-right-1"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "2-right-2"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

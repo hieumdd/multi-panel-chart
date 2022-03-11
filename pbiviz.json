@@ -1,0 +1,20 @@
+{
+    "visual": {
+        "name": "multiPanel",
+        "displayName": "MultiPanel",
+        "guid": "multiPanel425AC3D647934094B3F3B090DA89E2D8",
+        "visualClassName": "Visual",
+        "version": "1.0.0",
+        "description": "",
+        "supportUrl": "",
+        "gitHubUrl": ""
+    },
+    "apiVersion": "3.8.0",
+    "author": { "name": "", "email": "" },
+    "assets": { "icon": "assets/icon.png" },
+    "externalJS": null,
+    "style": "style/visual.less",
+    "capabilities": "capabilities.json",
+    "dependencies": null,
+    "stringResources": []
+}
