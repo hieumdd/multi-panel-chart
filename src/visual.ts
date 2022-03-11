@@ -12,9 +12,10 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import { VisualSettings } from './settings';
 
+import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
 
-import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
+import tooltip from './components/tooltip';
 
 type Data = {
     id: string;
@@ -154,20 +155,7 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
             top: '5%',
             right: 'right',
         },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                crossStyle: {
-                    color: '#999',
-                },
-            },
-            position: (pos, params, el, elRect, size) => ({
-                top: '20%',
-                [['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]]: '10%',
-            }),
-            // formatter: tooltipFormatter,
-        },
+        tooltip,
         axisPointer: {
             link: {
                 xAxisIndex: 'all',

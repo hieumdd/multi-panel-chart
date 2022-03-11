@@ -6,6 +6,7 @@
     "rules": {
         "no-relative-imports": false,
         "prefer-array-literal": false,
-        "max-func-body-length": false
+        "max-func-body-length": false,
+        "no-inner-html": false
     }
 }
