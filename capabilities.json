@@ -101,6 +101,13 @@
                         }
                     }
                 },
+                "left1Area": {
+                    "displayName": "Left 1 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "left2Color": {
                     "displayName": "Left 2 Color",
                     "description": "Color",
@@ -110,6 +117,13 @@
                                 "color": true
                             }
                         }
+                    }
+                },
+                "left2Area": {
+                    "displayName": "Left 2 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
                     }
                 },
                 "right1Color": {
@@ -123,6 +137,13 @@
                         }
                     }
                 },
+                "right1Area": {
+                    "displayName": "Right 1 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "right2Color": {
                     "displayName": "Right 2 Color",
                     "description": "Color",
@@ -133,11 +154,18 @@
                             }
                         }
                     }
+                },
+                "right2Area": {
+                    "displayName": "Right 2 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
+                    }
                 }
             }
         },
         "panel2": {
-            "displayName": "Panel 2",
+            "displayName": "Panel 1",
             "properties": {
                 "left1Color": {
                     "displayName": "Left 1 Color",
@@ -150,6 +178,13 @@
                         }
                     }
                 },
+                "left1Area": {
+                    "displayName": "Left 1 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "left2Color": {
                     "displayName": "Left 2 Color",
                     "description": "Color",
@@ -159,6 +194,13 @@
                                 "color": true
                             }
                         }
+                    }
+                },
+                "left2Area": {
+                    "displayName": "Left 2 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
                     }
                 },
                 "right1Color": {
@@ -172,6 +214,13 @@
                         }
                     }
                 },
+                "right1Area": {
+                    "displayName": "Right 1 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "right2Color": {
                     "displayName": "Right 2 Color",
                     "description": "Color",
@@ -181,6 +230,13 @@
                                 "color": true
                             }
                         }
+                    }
+                },
+                "right2Area": {
+                    "displayName": "Right 2 Area",
+                    "description": "Is Area Chart",
+                    "type": {
+                        "bool": true
                     }
                 }
             }

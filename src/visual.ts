@@ -6,16 +6,10 @@ import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructor
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisual = powerbi.extensibility.visual.IVisual;
 import DataView = powerbi.DataView;
-import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 
 // Formatting Options
-import VisualObjectInstance = powerbi.VisualObjectInstance;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import {
-    dataRoleHelper,
-    dataViewWildcard,
-} from 'powerbi-visuals-utils-dataviewutils';
-import VisualEnumerationInstanceKinds = powerbi.VisualEnumerationInstanceKinds;
+import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import { VisualSettings } from './settings';
 
 import * as echarts from 'echarts';
@@ -47,6 +41,16 @@ const panelOptionsMap = {
             2: 'right2Color',
         },
     },
+    isArea: {
+        left: {
+            1: 'left1Area',
+            2: 'left2Area',
+        },
+        right: {
+            1: 'right1Area',
+            2: 'right2Area',
+        },
+    },
 };
 
 const chain = '-';
@@ -76,6 +80,14 @@ const mapDataView = (dataView: DataView): Data[] => {
 };
 
 const buildOptions = (data: Data[], settings: VisualSettings) => {
+    const getSettingsMap = (
+        key: string,
+        [panelId, yAxisAlign, seriesAxisId]: string[],
+    ): string =>
+        settings[panelMap[panelId]][
+            panelOptionsMap[key][yAxisAlign][seriesAxisId]
+        ];
+
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panel }) => panel);
     const axisData = groupData(({ panel, yAxisAlign }) =>
@@ -119,13 +131,10 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
 
     const series = Object.entries(seriesData).map(([id, seriesData]) => {
         const [xAxisId, yAxis, key] = id.split(chain);
-        const [panelId, yAxisAlign, seriesAxisId] = seriesData
+        const seriesIds = seriesData
             .reduce((_, cur) => cur.id, '')
             .split(chain);
-        const color =
-            settings[panelMap[panelId]][
-                panelOptionsMap.color[yAxisAlign][seriesAxisId]
-            ];
+        const color = getSettingsMap('color', seriesIds);
         return {
             type: 'line',
             name: `${xAxisId}-${key}`,
@@ -135,13 +144,11 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
             data: seriesData.map(({ date, value }) => [date, value]),
             lineStyle: { color },
             itemStyle: { color },
+            areaStyle: getSettingsMap('isArea', seriesIds) ? { color } : null,
         };
     });
 
     return {
-        title: {
-            text: 'Testing',
-        },
         legend: {
             orient: 'vertical',
             top: '5%',
@@ -204,45 +211,8 @@ export class Visual implements IVisual {
 
     public enumerateObjectInstances(
         options: EnumerateVisualObjectInstancesOptions,
-    ): VisualObjectInstance[] {
-        let objectName = options.objectName;
-        let objectEnumeration: VisualObjectInstance[] = [];
-
-        if (!this.settings) {
-            return objectEnumeration;
-        }
-
-        const pushObjectEnum = (objectName) => {
-            objectEnumeration.push({
-                objectName,
-                properties: {
-                    left1Color: this.settings[objectName].left1Color,
-                    left2Color: this.settings[objectName].left2Color,
-                    right1Color: this.settings[objectName].right1Color,
-                    right2Color: this.settings[objectName].right2Color,
-                },
-                propertyInstanceKind: {
-                    left1Color: VisualEnumerationInstanceKinds.Constant,
-                    left2Color: VisualEnumerationInstanceKinds.Constant,
-                    right1Color: VisualEnumerationInstanceKinds.Constant,
-                    right2Color: VisualEnumerationInstanceKinds.Constant,
-                },
-                altConstantValueSelector: null,
-                selector: dataViewWildcard.createDataViewWildcardSelector(
-                    dataViewWildcard.DataViewWildcardMatchingOption
-                        .InstancesAndTotals,
-                ),
-            });
-        };
-
-        switch (objectName) {
-            case 'panel1':
-                pushObjectEnum(objectName);
-                break;
-            case 'panel2':
-                pushObjectEnum(objectName);
-                break;
-        }
-        return objectEnumeration;
+    ): VisualObjectInstanceEnumeration {
+        const settings = this.settings || VisualSettings.getDefault();
+        return VisualSettings.enumerateObjectInstances(settings, options);
     }
 }
