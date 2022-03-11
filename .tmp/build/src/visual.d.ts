@@ -10,6 +10,5 @@ export declare class Visual implements IVisual {
     private settings;
     constructor(options: VisualConstructorOptions);
     update(options: VisualUpdateOptions): void;
-    private static parseSettings;
     enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[];
 }

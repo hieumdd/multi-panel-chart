@@ -7,7 +7,7 @@ var powerbiKey: any = "powerbi";
 var powerbi: any = window[powerbiKey];
 var multiPanel425AC3D647934094B3F3B090DA89E2D8_DEBUG: IVisualPlugin = {
     name: 'multiPanel425AC3D647934094B3F3B090DA89E2D8_DEBUG',
-    displayName: 'MultiPanel',
+    displayName: 'Multi Panel Chart',
     class: 'Visual',
     apiVersion: '3.8.0',
     create: (options: VisualConstructorOptions) => {

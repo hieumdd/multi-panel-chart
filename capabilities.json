@@ -8,42 +8,82 @@
         {
             "displayName": "1 Left 1",
             "name": "1-left-1",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "1 Left 2",
             "name": "1-left-2",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "1 Right 1",
             "name": "1-right-1",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "1 Right 2",
             "name": "1-right-2",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "2 Left 1",
             "name": "2-left-1",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "2 Left 2",
             "name": "2-left-2",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "2 Right 1",
             "name": "2-right-1",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "2 Right 2",
             "name": "2-right-2",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         }
     ],
     "objects": {

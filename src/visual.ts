@@ -36,7 +36,7 @@ const panelMap = {
     2: 'panel2',
 };
 
-const yAxisAlignMap = {
+const panelOptionsMap = {
     color: {
         left: {
             1: 'left1Color',
@@ -51,7 +51,7 @@ const yAxisAlignMap = {
 
 const chain = '-';
 
-const mapDataView = (dataView: DataView, settings: VisualSettings): Data[] => {
+const mapDataView = (dataView: DataView): Data[] => {
     const { categories = [], values = [] } = dataView.categorical;
 
     const columnsData = [...categories, ...values].map(
@@ -124,7 +124,7 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
             .split(chain);
         const color =
             settings[panelMap[panelId]][
-                yAxisAlignMap.color[yAxisAlign][seriesAxisId]
+                panelOptionsMap.color[yAxisAlign][seriesAxisId]
             ];
         return {
             type: 'line',
@@ -186,13 +186,13 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
-        this.settings = Visual.parseSettings(
+        this.settings = VisualSettings.parse<VisualSettings>(
             options && options.dataViews && options.dataViews[0],
         );
 
         const dataView: DataView = options.dataViews[0];
 
-        const data = mapDataView(dataView, this.settings);
+        const data = mapDataView(dataView);
 
         const chartOptions = buildOptions(data, this.settings);
 
@@ -200,10 +200,6 @@ export class Visual implements IVisual {
         console.log(chartOptions);
         const chart = echarts.init(this.target);
         chart.setOption(chartOptions);
-    }
-
-    private static parseSettings(dataView: DataView): VisualSettings {
-        return <VisualSettings>VisualSettings.parse(dataView);
     }
 
     public enumerateObjectInstances(
