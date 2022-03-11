@@ -16,6 +16,7 @@ import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
 
 import tooltip from './components/tooltip';
+import legend from './components/legend'
 
 type Data = {
     id: string;
@@ -150,11 +151,7 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
     });
 
     return {
-        legend: {
-            orient: 'vertical',
-            top: '5%',
-            right: 'right',
-        },
+        legend,
         tooltip,
         axisPointer: {
             link: {
