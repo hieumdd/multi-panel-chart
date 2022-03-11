@@ -17,6 +17,7 @@ import * as echarts from 'echarts';
 
 import tooltip from './components/tooltip';
 import legend from './components/legend'
+import axisPointer from './components/axisPointer'
 
 type Data = {
     id: string;
@@ -153,15 +154,7 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
     return {
         legend,
         tooltip,
-        axisPointer: {
-            link: {
-                xAxisIndex: 'all',
-            },
-            label: {
-                backgroundColor: '#777',
-                // formatter: axisPointerFormatter,
-            },
-        },
+        axisPointer,
         grid,
         xAxis,
         yAxis,

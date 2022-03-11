@@ -14,6 +14,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
+    "dayjs": "^1.10.8",
     "echarts": "^5.3.1",
     "lodash-es": "^4.17.21",
     "powerbi-visuals-api": "~3.8.0",

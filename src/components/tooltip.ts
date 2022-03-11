@@ -29,8 +29,6 @@ const formatter = (i: any) => {
         })
         .forEach((el) => tooltipEl.appendChild(el));
 
-    console.log(tooltipEl);
-
     return tooltipEl.outerHTML;
 };
 
@@ -38,9 +36,9 @@ const tooltip = {
     trigger: 'axis',
     axisPointer: {
         type: 'cross',
-        crossStyle: {
-            color: '#999',
-        },
+        // crossStyle: {
+        //     color: '#999',
+        // },
     },
     position: (pos, params, el, elRect, size) => ({
         top: '20%',
