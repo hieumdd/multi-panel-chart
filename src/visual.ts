@@ -11,7 +11,6 @@ import DataViewObjects = powerbi.DataViewObjects;
 import DataViewMetadata = powerbi.DataViewMetadata;
 
 // Formatting Options
-import VisualObjectInstance = powerbi.VisualObjectInstance;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import { VisualSettings } from './settings';
@@ -174,55 +173,49 @@ export class Visual implements IVisual {
     public enumerateObjectInstances(
         options: EnumerateVisualObjectInstancesOptions,
     ): VisualObjectInstanceEnumeration {
-        let objectName = options.objectName;
-        let objectEnumeration: VisualObjectInstance[] = [];
+        const { objectName } = options;
 
         if (!this.settings || !this.data) {
-            return objectEnumeration;
+            return [];
         }
 
-        const pushObjectEnum = (propertiesFn: (DataViewObjects) => any) => {
+        const pushObjectEnum = (
+            propertiesFn: (DataViewObjects) => any,
+        ): VisualObjectInstanceEnumeration =>
             zip(
                 this.metadata.columns.slice(1),
                 Object.entries(groupBy(this.data, ({ key }) => key)),
-            ).forEach(([{ queryName, objects }, [key]]) => {
-                objectEnumeration.push({
-                    objectName,
-                    displayName: key,
-                    properties: propertiesFn(objects),
-                    selector: {
-                        metadata: queryName,
-                    },
-                });
-            });
-        };
+            ).map(([{ queryName, objects }, [key]]) => ({
+                objectName,
+                displayName: key,
+                properties: propertiesFn(objects),
+                selector: {
+                    metadata: queryName,
+                },
+            }));
 
         switch (objectName) {
             case 'panel':
-                pushObjectEnum((objects) => ({
+                return pushObjectEnum((objects) => ({
                     panel: getPanel(objects),
                 }));
-                break;
             case 'yAxisAlign':
-                pushObjectEnum((objects) => ({
+                return pushObjectEnum((objects) => ({
                     yAxisAlign: getYAxis(objects),
                 }));
-                break;
             case 'color':
-                pushObjectEnum((objects) => ({
+                return pushObjectEnum((objects) => ({
                     color: {
                         solid: {
                             color: getColor(objects),
                         },
                     },
                 }));
-                break;
             case 'isArea':
-                pushObjectEnum((objects) => ({
+                return pushObjectEnum((objects) => ({
                     isArea: getIsArea(objects),
                 }));
-                break;
         }
-        return objectEnumeration;
+        return [];
     }
 }
