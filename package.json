@@ -18,7 +18,6 @@
     "echarts": "^5.3.1",
     "lodash-es": "^4.17.21",
     "powerbi-visuals-api": "~3.8.0",
-    "powerbi-visuals-utils-colorutils": "^2.3.1",
     "powerbi-visuals-utils-dataviewutils": "^2.4.1"
   },
   "devDependencies": {
