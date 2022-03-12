@@ -13,11 +13,11 @@ import DataViewMetadata = powerbi.DataViewMetadata;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
-import { VisualSettings } from './settings';
 
-import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
 
+import { VisualSettings } from './settings';
 import getTooltip from './components/tooltip';
 import legend from './components/legend';
 import axisPointer from './components/axisPointer';
@@ -144,10 +144,9 @@ const buildOptions = (data: Data[]) => {
         };
     });
 
-    const valueFormatters = Object.entries(seriesData).map(([id]) => {
-        const valueFormatterOption = id.split(chain).slice(-1).pop();
-        return formatter[valueFormatterOption];
-    });
+    const valueFormatters = Object.entries(seriesData).map(
+        ([id]) => formatter[id.split(chain).slice(-1).pop()],
+    );
 
     return {
         legend,
@@ -182,8 +181,13 @@ export class Visual implements IVisual {
         this.metadata = this.dataView.metadata;
 
         this.data = mapDataView(this.dataView);
-        const chartOptions = buildOptions(this.data);
         console.log(this.data);
+
+        if (isEmpty(this.data)) {
+            return
+        }
+        
+        const chartOptions = buildOptions(this.data);
         console.log(chartOptions);
 
         this.chart.resize();
