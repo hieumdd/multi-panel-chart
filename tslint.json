@@ -7,6 +7,8 @@
         "no-relative-imports": false,
         "prefer-array-literal": false,
         "max-func-body-length": false,
-        "no-inner-html": false
+        "no-inner-html": false,
+        "export-name": false,
+        "import-name": false
     }
 }

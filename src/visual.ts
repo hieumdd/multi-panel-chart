@@ -18,16 +18,21 @@ import { VisualSettings } from './settings';
 import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
 
-import tooltip from './components/tooltip';
+import getTooltip from './components/tooltip';
 import legend from './components/legend';
 import axisPointer from './components/axisPointer';
 import {
+    Panel,
+    YAxis,
+    Color,
+    IsArea,
+    ValueFormat,
     getPanel,
     getYAxis,
     getColor,
     getIsArea,
     getValueFormat,
-} from './enumObjectsUtils';
+} from './enumObjects';
 import formatter from './components/formatter';
 
 type Data = {
@@ -35,11 +40,11 @@ type Data = {
     date: Date;
     key: string;
     value: number;
-    panelId: string;
-    yAxisId: string;
-    color: string;
-    isArea: boolean;
-    valueFormatterOption: string;
+    panelId: Panel;
+    yAxisId: YAxis;
+    color: Color;
+    isArea: IsArea;
+    valueFormatterOption: ValueFormat;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -146,7 +151,7 @@ const buildOptions = (data: Data[]) => {
 
     return {
         legend,
-        tooltip: tooltip(valueFormatters),
+        tooltip: getTooltip(valueFormatters),
         axisPointer,
         grid,
         xAxis,

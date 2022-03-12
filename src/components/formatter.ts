@@ -1,7 +1,9 @@
 import { valueFormatter } from 'powerbi-visuals-utils-formattingutils';
 import ValueFormatterOptions = valueFormatter.ValueFormatterOptions;
 
-const options: Record<string, ValueFormatterOptions> = {
+import { ValueFormat } from '../enumObjects';
+
+const options: Record<ValueFormat, ValueFormatterOptions> = {
     raw: { value: 1, precision: 2 },
     percentage: { format: '0.00 %;-0.00 %;0.00 %', precision: 2 },
     thousand: { value: 1001, precision: 2 },

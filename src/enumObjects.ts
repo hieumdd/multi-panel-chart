@@ -4,23 +4,29 @@ import { dataViewObjects } from 'powerbi-visuals-utils-dataviewutils';
 
 type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
 
-const getPanel: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
-    const value = dataViewObjects.getValue<string>(objects, {
+export type Panel = '1' | '2' | '3' | '4' | '5';
+export type YAxis = 'left' | 'right';
+export type Color = string;
+export type IsArea = boolean;
+export type ValueFormat = 'raw' | 'percentage' | 'thousand' | 'million';
+
+export const getPanel: GetEnumObjectsValue<Panel> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<Panel>(objects, {
         objectName: 'panel',
         propertyName: 'panel',
     });
     return objects && value ? value : '1';
 };
 
-const getYAxis: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
-    const value = dataViewObjects.getValue<string>(objects, {
+export const getYAxis: GetEnumObjectsValue<YAxis> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<YAxis>(objects, {
         objectName: 'yAxisAlign',
         propertyName: 'yAxisAlign',
     });
     return objects && value ? value : 'left';
 };
 
-const getColor: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
+export const getColor: GetEnumObjectsValue<Color> = (objects: DataViewObjects) => {
     const value = dataViewObjects.getFillColor(objects, {
         objectName: 'color',
         propertyName: 'color',
@@ -28,22 +34,20 @@ const getColor: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
     return objects && value ? value : '#000000';
 };
 
-const getIsArea: GetEnumObjectsValue<boolean> = (objects: DataViewObjects) => {
-    const value = dataViewObjects.getValue<boolean>(objects, {
+export const getIsArea: GetEnumObjectsValue<IsArea> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<IsArea>(objects, {
         objectName: 'isArea',
         propertyName: 'isArea',
     });
     return objects && value ? value : false;
 };
 
-const getValueFormat: GetEnumObjectsValue<string> = (
+export const getValueFormat: GetEnumObjectsValue<ValueFormat> = (
     objects: DataViewObjects,
 ) => {
-    const value = dataViewObjects.getValue<string>(objects, {
+    const value = dataViewObjects.getValue<ValueFormat>(objects, {
         objectName: 'valueFormat',
         propertyName: 'valueFormat',
     });
     return objects && value ? value : 'raw';
 };
-
-export { getPanel, getYAxis, getColor, getIsArea, getValueFormat };

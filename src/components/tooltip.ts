@@ -38,7 +38,7 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
     return tooltipEl.outerHTML;
 };
 
-const tooltip = (seriesValueFormatters: IValueFormatter[]) => ({
+const getTooltip = (seriesValueFormatters: IValueFormatter[]) => ({
     trigger: 'axis',
     axisPointer: {
         type: 'cross',
@@ -50,4 +50,4 @@ const tooltip = (seriesValueFormatters: IValueFormatter[]) => ({
     formatter: formatter(seriesValueFormatters),
 });
 
-export default tooltip;
+export default getTooltip;
