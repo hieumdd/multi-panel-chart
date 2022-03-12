@@ -1,9 +1,9 @@
 {
-  "name": "visual",
-  "description": "default_template_value",
+  "name": "multi-panel-chart",
+  "description": "Multi Panel Chart - Custom Visual for Power BI",
   "repository": {
-    "type": "default_template_value",
-    "url": "default_template_value"
+    "type": "git",
+    "url": "https://github.com/hieumdd/multi-panel-chart"
   },
   "license": "MIT",
   "scripts": {
