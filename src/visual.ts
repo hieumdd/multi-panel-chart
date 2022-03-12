@@ -14,10 +14,7 @@ import DataViewMetadata = powerbi.DataViewMetadata;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
-import VisualEnumerationInstanceKinds = powerbi.VisualEnumerationInstanceKinds;
 import { VisualSettings } from './settings';
-
-import { ColorHelper } from 'powerbi-visuals-utils-colorutils';
 
 import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
@@ -25,28 +22,17 @@ import * as echarts from 'echarts';
 import tooltip from './components/tooltip';
 import legend from './components/legend';
 import axisPointer from './components/axisPointer';
-import { dataViewObjects } from 'powerbi-visuals-utils-dataviewutils';
+import { getPanel, getYAxis, getColor } from './enumObjectsUtils';
 
 type Data = {
     id: string;
     panelId: string;
     yAxisId: string;
-    seriesIndexId: string;
     date: Date;
     key: string;
     value: number;
     color: string;
 };
-
-const chain = '-';
-
-const getColor = (objects: DataViewObjects) =>
-    objects
-        ? dataViewObjects.getFillColor(objects, {
-              objectName: 'color',
-              propertyName: 'color',
-          })
-        : '#000000';
 
 const mapDataView = (dataView: DataView): Data[] => {
     const { columns, rows } = dataView.table;
@@ -75,29 +61,27 @@ const mapDataView = (dataView: DataView): Data[] => {
         return zip(values, dataObjects).map(([value, object]) => ({
             ...value,
             date: new Date(date),
+            panelId: getPanel(object),
+            yAxisId: getYAxis(object),
             color: getColor(object),
         }));
     });
 
-    return flattenDepth(matchedData, 1).map((d) => {
-        const [panelId, yAxisId, seriesIndexId] = d.id.split(chain);
-        return {
-            ...d,
-            panelId,
-            yAxisId,
-            seriesIndexId,
-        };
-    });
+    console.log(matchedData);
+
+    return flattenDepth(matchedData, 1);
 };
 
 const buildOptions = (data: Data[]) => {
+    const chain = '-';
+    
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panelId }) => panelId);
     const axisData = groupData(({ panelId, yAxisId }) =>
         [panelId, yAxisId].join(chain),
     );
-    const seriesData = groupData(({ panelId, yAxisId, key }) =>
-        [panelId, yAxisId, key].join(chain),
+    const seriesData = groupData(({ panelId, yAxisId, key, color }) =>
+        [panelId, yAxisId, key, color].join(chain),
     );
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
@@ -114,34 +98,30 @@ const buildOptions = (data: Data[]) => {
     }));
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
-        const [gridId, y_axis] = id.split(chain);
+        const [panelId, yAxisId] = id.split(chain);
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
         return {
             type: 'value',
             alignTick: true,
-            gridId,
-            id,
+            gridId: panelId,
+            id: `${panelId}-${yAxisId}`,
             min: min(cleanedData) * 0.99,
             max: max(cleanedData) * 1.01,
-            position: y_axis.toLowerCase(),
-            axisLabel: {
-                formatter: round,
-            },
+            position: yAxisId,
+            axisLabel: { formatter: round },
         };
     });
 
-    const series = Object.entries(seriesData).map(([id, seriesData]) => {
-        const [xAxisId, yAxis, key] = id.split(chain);
-        const color = seriesData.reduce((_, cur) => cur.color, '');
+    const series = Object.entries(seriesData).map(([id, data]) => {
+        const [panelId, yAxisId, key, color] = id.split(chain);
         return {
             type: 'line',
-            name: `${xAxisId}-${key}`,
-            xAxisId,
-            yAxisId: `${xAxisId}-${yAxis}`,
-            key,
-            data: seriesData.map(({ date, value }) => [date, value]),
+            name: `${panelId} - ${key}`,
+            xAxisId: panelId,
+            yAxisId: `${panelId}-${yAxisId}`,
+            data: data.map(({ date, value }) => [date, value]),
             lineStyle: { color },
             itemStyle: { color },
             // areaStyle: getSettingsMap('isArea', seriesIds) ? { color } : null,
@@ -184,6 +164,8 @@ export class Visual implements IVisual {
 
         this.data = mapDataView(this.dataView);
         const chartOptions = buildOptions(this.data);
+        console.log(this.data);
+        console.log(chartOptions);
 
         this.chart.resize();
         this.chart.setOption(chartOptions, true, true);
@@ -198,31 +180,41 @@ export class Visual implements IVisual {
         if (!this.settings || !this.data) {
             return objectEnumeration;
         }
+        const pushObjectEnum = (propertiesFn: (DataViewObjects) => any) => {
+            zip(
+                this.metadata.columns.slice(1),
+                Object.entries(groupBy(this.data, ({ key }) => key)),
+            ).forEach(([{ queryName, objects }, [key]]) => {
+                objectEnumeration.push({
+                    objectName,
+                    displayName: key,
+                    properties: propertiesFn(objects),
+                    selector: {
+                        metadata: queryName,
+                    },
+                });
+            });
+        };
 
         switch (objectName) {
+            case 'panel':
+                pushObjectEnum((objects) => ({
+                    panel: getPanel(objects),
+                }));
+                break;
+            case 'yAxisAlign':
+                pushObjectEnum((objects) => ({
+                    yAxisAlign: getYAxis(objects),
+                }));
+                break;
             case 'color':
-                zip(
-                    this.metadata.columns.slice(1),
-                    Object.entries(groupBy(this.data, ({ key }) => key)),
-                ).forEach(([{ queryName, objects }, [key]]) => {
-                    objectEnumeration.push({
-                        objectName,
-                        displayName: key,
-                        properties: {
-                            color: {
-                                solid: {
-                                    color: getColor(objects),
-                                },
-                            },
+                pushObjectEnum((objects) => ({
+                    color: {
+                        solid: {
+                            color: getColor(objects),
                         },
-                        propertyInstanceKind: {
-                            color: VisualEnumerationInstanceKinds.Constant,
-                        },
-                        selector: {
-                            metadata: queryName,
-                        },
-                    });
-                });
+                    },
+                }));
                 break;
         }
         return objectEnumeration;

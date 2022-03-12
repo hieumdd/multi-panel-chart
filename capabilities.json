@@ -6,78 +6,8 @@
             "kind": "Grouping"
         },
         {
-            "displayName": "1 Left 1",
-            "name": "1-left-1",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "1 Left 2",
-            "name": "1-left-2",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "1 Right 1",
-            "name": "1-right-1",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "1 Right 2",
-            "name": "1-right-2",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "2 Left 1",
-            "name": "2-left-1",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "2 Left 2",
-            "name": "2-left-2",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "2 Right 1",
-            "name": "2-right-1",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
-        },
-        {
-            "displayName": "2 Right 2",
-            "name": "2-right-2",
+            "displayName": "Measures",
+            "name": "measures",
             "kind": "Measure",
             "requiredTypes": [
                 {
@@ -87,6 +17,35 @@
         }
     ],
     "objects": {
+        "panel": {
+            "displayName": "Panels",
+            "properties": {
+                "panel": {
+                    "type": {
+                        "enumeration": [
+                            { "displayName": "1", "value": "1" },
+                            { "displayName": "2", "value": "2" },
+                            { "displayName": "3", "value": "3" },
+                            { "displayName": "4", "value": "4" },
+                            { "displayName": "5", "value": "5" }
+                        ]
+                    }
+                }
+            }
+        },
+        "yAxisAlign": {
+            "displayName": "Y Axis Align",
+            "properties": {
+                "yAxisAlign": {
+                    "type": {
+                        "enumeration": [
+                            { "displayName": "Left", "value": "left" },
+                            { "displayName": "Right", "value": "right" }
+                        ]
+                    }
+                }
+            }
+        },
         "color": {
             "displayName": "Series Color",
             "properties": {
@@ -111,78 +70,20 @@
                     "date": {
                         "max": 1
                     },
-                    "1-left-1": {
-                        "max": 1
-                    },
-                    "1-left-2": {
-                        "max": 1
-                    },
-                    "1-right-1": {
-                        "max": 1
-                    },
-                    "1-right-2": {
-                        "max": 1
-                    },
-                    "2-left-1": {
-                        "max": 1
-                    },
-                    "2-left-2": {
-                        "max": 1
-                    },
-                    "2-right-1": {
-                        "max": 1
-                    },
-                    "2-right-2": {
-                        "max": 1
-                    }
+                    "measures": {}
                 }
             ],
             "table": {
                 "rows": {
                     "select": [
                         {
-                            "for": {
-                                "in": "date"
+                            "bind": {
+                                "to": "date"
                             }
                         },
                         {
                             "for": {
-                                "in": "1-left-1"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "1-left-2"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "1-right-1"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "1-right-2"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "2-left-1"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "2-left-2"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "2-right-1"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "2-right-2"
+                                "in": "measures"
                             }
                         }
                     ]
