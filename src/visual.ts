@@ -5,7 +5,6 @@ import powerbi from 'powerbi-visuals-api';
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisual = powerbi.extensibility.visual.IVisual;
-import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import DataView = powerbi.DataView;
 import DataViewObjects = powerbi.DataViewObjects;
 import DataViewMetadata = powerbi.DataViewMetadata;
@@ -13,6 +12,7 @@ import DataViewMetadata = powerbi.DataViewMetadata;
 // Formatting Options
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
+import VisualObjectInstance = powerbi.VisualObjectInstance;
 import { VisualSettings } from './settings';
 
 import { groupBy, zip, flattenDepth, min, max, round } from 'lodash-es';
@@ -165,13 +165,11 @@ export class Visual implements IVisual {
     private settings: VisualSettings;
     private metadata: DataViewMetadata;
     private dataView: DataView;
-    private host: IVisualHost;
     private data: Data[];
     private chart: echarts.ECharts;
 
     constructor(options: VisualConstructorOptions) {
         this.target = options.element;
-        this.host = options.host;
         this.chart = echarts.init(this.target);
     }
 
@@ -202,7 +200,9 @@ export class Visual implements IVisual {
         }
 
         const pushObjectEnum = (
-            propertiesFn: (DataViewObjects) => any,
+            propertiesFn: (
+                DataViewObjects,
+            ) => VisualObjectInstance['properties'],
         ): VisualObjectInstanceEnumeration =>
             zip(
                 this.metadata.columns.slice(1),
