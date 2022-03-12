@@ -22,16 +22,17 @@ import * as echarts from 'echarts';
 import tooltip from './components/tooltip';
 import legend from './components/legend';
 import axisPointer from './components/axisPointer';
-import { getPanel, getYAxis, getColor } from './enumObjectsUtils';
+import { getPanel, getYAxis, getColor, getIsArea } from './enumObjectsUtils';
 
 type Data = {
     id: string;
-    panelId: string;
-    yAxisId: string;
     date: Date;
     key: string;
     value: number;
+    panelId: string;
+    yAxisId: string;
     color: string;
+    isArea: boolean;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -64,24 +65,23 @@ const mapDataView = (dataView: DataView): Data[] => {
             panelId: getPanel(object),
             yAxisId: getYAxis(object),
             color: getColor(object),
+            isArea: getIsArea(object),
         }));
     });
-
-    console.log(matchedData);
 
     return flattenDepth(matchedData, 1);
 };
 
 const buildOptions = (data: Data[]) => {
     const chain = '-';
-    
+
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panelId }) => panelId);
     const axisData = groupData(({ panelId, yAxisId }) =>
         [panelId, yAxisId].join(chain),
     );
-    const seriesData = groupData(({ panelId, yAxisId, key, color }) =>
-        [panelId, yAxisId, key, color].join(chain),
+    const seriesData = groupData(({ panelId, yAxisId, key, color, isArea }) =>
+        [panelId, yAxisId, key, color, isArea].join(chain),
     );
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
@@ -115,7 +115,7 @@ const buildOptions = (data: Data[]) => {
     });
 
     const series = Object.entries(seriesData).map(([id, data]) => {
-        const [panelId, yAxisId, key, color] = id.split(chain);
+        const [panelId, yAxisId, key, color, isArea] = id.split(chain);
         return {
             type: 'line',
             name: `${panelId} - ${key}`,
@@ -124,7 +124,7 @@ const buildOptions = (data: Data[]) => {
             data: data.map(({ date, value }) => [date, value]),
             lineStyle: { color },
             itemStyle: { color },
-            // areaStyle: getSettingsMap('isArea', seriesIds) ? { color } : null,
+            areaStyle: JSON.parse(isArea) ? { color } : null,
         };
     });
 
@@ -180,6 +180,7 @@ export class Visual implements IVisual {
         if (!this.settings || !this.data) {
             return objectEnumeration;
         }
+
         const pushObjectEnum = (propertiesFn: (DataViewObjects) => any) => {
             zip(
                 this.metadata.columns.slice(1),
@@ -214,6 +215,11 @@ export class Visual implements IVisual {
                             color: getColor(objects),
                         },
                     },
+                }));
+                break;
+            case 'isArea':
+                pushObjectEnum((objects) => ({
+                    isArea: getIsArea(objects),
                 }));
                 break;
         }

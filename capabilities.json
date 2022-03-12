@@ -50,14 +50,22 @@
             "displayName": "Series Color",
             "properties": {
                 "color": {
-                    "displayName": "Color",
-                    "description": "Color",
                     "type": {
                         "fill": {
                             "solid": {
                                 "color": true
                             }
                         }
+                    }
+                }
+            }
+        },
+        "isArea": {
+            "displayName": "Series Area Chart",
+            "properties": {
+                "isArea": {
+                    "type": {
+                        "bool": true
                     }
                 }
             }

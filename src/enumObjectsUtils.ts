@@ -2,26 +2,25 @@ import powerbi from 'powerbi-visuals-api';
 import DataViewObjects = powerbi.DataViewObjects;
 import { dataViewObjects } from 'powerbi-visuals-utils-dataviewutils';
 
+type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
 
-type GetEnumObjectsValue = (objects: DataViewObjects) => string;
-
-const getPanel: GetEnumObjectsValue = (objects: DataViewObjects) => {
-    const value = <string>dataViewObjects.getValue(objects, {
+const getPanel: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<string>(objects, {
         objectName: 'panel',
         propertyName: 'panel',
     });
     return objects && value ? value : '1';
 };
 
-const getYAxis: GetEnumObjectsValue = (objects: DataViewObjects) => {
-    const value = <string>dataViewObjects.getValue(objects, {
+const getYAxis: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<string>(objects, {
         objectName: 'yAxisAlign',
         propertyName: 'yAxisAlign',
     });
     return objects && value ? value : 'left';
 };
 
-const getColor: GetEnumObjectsValue = (objects: DataViewObjects) => {
+const getColor: GetEnumObjectsValue<string> = (objects: DataViewObjects) => {
     const value = dataViewObjects.getFillColor(objects, {
         objectName: 'color',
         propertyName: 'color',
@@ -29,4 +28,12 @@ const getColor: GetEnumObjectsValue = (objects: DataViewObjects) => {
     return objects && value ? value : '#000000';
 };
 
-export { getPanel, getYAxis, getColor };
+const getIsArea: GetEnumObjectsValue<boolean> = (objects: DataViewObjects) => {
+    const value = dataViewObjects.getValue<boolean>(objects, {
+        objectName: 'isArea',
+        propertyName: 'isArea',
+    });
+    return objects && value ? value : false;
+};
+
+export { getPanel, getYAxis, getColor, getIsArea };
