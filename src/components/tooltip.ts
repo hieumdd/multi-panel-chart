@@ -14,7 +14,7 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
                 seriesEl.className = 'tooltip-series';
 
                 const labelEl = document.createElement('p');
-                labelEl.innerHTML = `${marker} ${seriesName}}`;
+                labelEl.innerHTML = `${marker} ${seriesName}`;
                 labelEl.style.fontWeight = '400';
 
                 const valueEl = document.createElement('p');
