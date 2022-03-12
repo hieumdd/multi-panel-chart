@@ -21,7 +21,14 @@ import * as echarts from 'echarts';
 import tooltip from './components/tooltip';
 import legend from './components/legend';
 import axisPointer from './components/axisPointer';
-import { getPanel, getYAxis, getColor, getIsArea } from './enumObjectsUtils';
+import {
+    getPanel,
+    getYAxis,
+    getColor,
+    getIsArea,
+    getValueFormat,
+} from './enumObjectsUtils';
+import formatter from './components/formatter';
 
 type Data = {
     id: string;
@@ -32,6 +39,7 @@ type Data = {
     yAxisId: string;
     color: string;
     isArea: boolean;
+    valueFormatterOption: string;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -65,6 +73,7 @@ const mapDataView = (dataView: DataView): Data[] => {
             yAxisId: getYAxis(object),
             color: getColor(object),
             isArea: getIsArea(object),
+            valueFormatterOption: getValueFormat(object),
         }));
     });
 
@@ -79,8 +88,11 @@ const buildOptions = (data: Data[]) => {
     const axisData = groupData(({ panelId, yAxisId }) =>
         [panelId, yAxisId].join(chain),
     );
-    const seriesData = groupData(({ panelId, yAxisId, key, color, isArea }) =>
-        [panelId, yAxisId, key, color, isArea].join(chain),
+    const seriesData = groupData(
+        ({ panelId, yAxisId, key, color, isArea, valueFormatterOption }) =>
+            [panelId, yAxisId, key, color, isArea, valueFormatterOption].join(
+                chain,
+            ),
     );
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
@@ -127,9 +139,14 @@ const buildOptions = (data: Data[]) => {
         };
     });
 
+    const valueFormatters = Object.entries(seriesData).map(([id]) => {
+        const valueFormatterOption = id.split(chain).slice(-1).pop();
+        return formatter[valueFormatterOption];
+    });
+
     return {
         legend,
-        tooltip,
+        tooltip: tooltip(valueFormatters),
         axisPointer,
         grid,
         xAxis,
@@ -214,6 +231,10 @@ export class Visual implements IVisual {
             case 'isArea':
                 return pushObjectEnum((objects) => ({
                     isArea: getIsArea(objects),
+                }));
+            case 'valueFormat':
+                return pushObjectEnum((objects) => ({
+                    valueFormat: getValueFormat(objects),
                 }));
         }
         return [];

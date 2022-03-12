@@ -69,6 +69,24 @@
                     }
                 }
             }
+        },
+        "valueFormat": {
+            "displayName": "Value Format",
+            "properties": {
+                "valueFormat": {
+                    "type": {
+                        "enumeration": [
+                            { "displayName": "Raw", "value": "raw" },
+                            {
+                                "displayName": "Percentage",
+                                "value": "percentage"
+                            },
+                            { "displayName": "Thousand", "value": "thousand" },
+                            { "displayName": "Million", "value": "million" }
+                        ]
+                    }
+                }
+            }
         }
     },
     "dataViewMappings": [

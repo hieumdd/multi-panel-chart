@@ -36,4 +36,14 @@ const getIsArea: GetEnumObjectsValue<boolean> = (objects: DataViewObjects) => {
     return objects && value ? value : false;
 };
 
-export { getPanel, getYAxis, getColor, getIsArea };
+const getValueFormat: GetEnumObjectsValue<string> = (
+    objects: DataViewObjects,
+) => {
+    const value = dataViewObjects.getValue<string>(objects, {
+        objectName: 'valueFormat',
+        propertyName: 'valueFormat',
+    });
+    return objects && value ? value : 'raw';
+};
+
+export { getPanel, getYAxis, getColor, getIsArea, getValueFormat };
