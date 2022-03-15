@@ -103,7 +103,7 @@ const buildOptions = (data: Data[]) => {
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
         id,
         top: `${i * (100 / arr.length) + 5}%`,
-        height: `${(100 / arr.length) * 0.5}%`,
+        height: `${(100 / arr.length) * 0.8}%`,
         right: '25%',
     }));
 
