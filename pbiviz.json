@@ -4,7 +4,7 @@
         "displayName": "Multi Panel Chart",
         "guid": "multiPanel425AC3D647934094B3F3B090DA89E2D8",
         "visualClassName": "Visual",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "description": "Multi Panel Chart - Custom Visual for Power BI",
         "supportUrl": "https://github.com/hieumdd/multi-panel-chart",
         "gitHubUrl": "https://github.com/hieumdd/multi-panel-chart"
