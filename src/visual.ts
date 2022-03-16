@@ -134,6 +134,7 @@ const buildOptions = (data: Data[]) => {
         const [panelId, yAxisId, key, color, isArea] = id.split(chain);
         return {
             type: 'line',
+            symbol: 'none',
             name: `${panelId} - ${key}`,
             xAxisId: panelId,
             yAxisId: `${panelId}-${yAxisId}`,
