@@ -14,7 +14,7 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import { groupBy, zip, flattenDepth, isEmpty, min, max, round } from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty, min, max } from 'lodash-es';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
@@ -90,8 +90,8 @@ const buildOptions = (data: Data[]) => {
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panelId }) => panelId);
-    const axisData = groupData(({ panelId, yAxisId }) =>
-        [panelId, yAxisId].join(chain),
+    const axisData = groupData(({ panelId, yAxisId, valueFormatterOption }) =>
+        [panelId, yAxisId, valueFormatterOption].join(chain),
     );
     const seriesData = groupData(
         ({ panelId, yAxisId, key, color, isArea, valueFormatterOption }) =>
@@ -114,7 +114,7 @@ const buildOptions = (data: Data[]) => {
     }));
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
-        const [panelId, yAxisId] = id.split(chain);
+        const [panelId, yAxisId, valueFormatterOption] = id.split(chain);
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
@@ -126,7 +126,10 @@ const buildOptions = (data: Data[]) => {
             min: min(cleanedData) * 0.99,
             max: max(cleanedData) * 1.01,
             position: yAxisId,
-            axisLabel: { formatter: round },
+            axisLabel: {
+                formatter: (value) =>
+                    formatter[valueFormatterOption].format(value),
+            },
         };
     });
 
@@ -185,9 +188,9 @@ export class Visual implements IVisual {
         console.log(this.data);
 
         if (isEmpty(this.data)) {
-            return
+            return;
         }
-        
+
         const chartOptions = buildOptions(this.data);
         console.log(chartOptions);
 
