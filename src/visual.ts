@@ -90,8 +90,8 @@ const buildOptions = (data: Data[]) => {
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panelId }) => panelId);
-    const axisData = groupData(({ panelId, yAxisId, valueFormatterOption }) =>
-        [panelId, yAxisId, valueFormatterOption].join(chain),
+    const axisData = groupData(({ panelId, yAxisId }) =>
+        [panelId, yAxisId].join(chain),
     );
     const seriesData = groupData(
         ({ panelId, yAxisId, key, color, isArea, valueFormatterOption }) =>
@@ -114,10 +114,14 @@ const buildOptions = (data: Data[]) => {
     }));
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
-        const [panelId, yAxisId, valueFormatterOption] = id.split(chain);
+        const [panelId, yAxisId] = id.split(chain);
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
+        const valueFormatterOption = data.reduce(
+            (_, cur) => cur.valueFormatterOption,
+            '',
+        );
         return {
             type: 'value',
             alignTick: true,
