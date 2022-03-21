@@ -74,8 +74,8 @@ const mapDataView = (dataView: DataView): Data[] => {
             ).map(([[id, key], value]) => ({ id, key, value })),
         );
 
-    const matchedData = zip(dateValues, dataValues).map(([date, values]) => {
-        return zip(values, dataObjects).map(([value, { format, objects }]) => ({
+    const matchedData = zip(dateValues, dataValues).map(([date, values]) =>
+        zip(values, dataObjects).map(([value, { format, objects }]) => ({
             ...value,
             date: new Date(date),
             panelId: getPanel(objects),
@@ -83,8 +83,8 @@ const mapDataView = (dataView: DataView): Data[] => {
             color: getColor(objects),
             isArea: getIsArea(objects),
             valueFormat: format || defaultFormat,
-        }));
-    });
+        })),
+    );
 
     return flattenDepth(matchedData, 1);
 };
