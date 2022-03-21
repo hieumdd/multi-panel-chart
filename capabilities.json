@@ -17,6 +17,17 @@
         }
     ],
     "objects": {
+        "dataPoint": {
+            "displayName": "Data Point",
+            "properties": {
+                "dataPoint": {
+                    "displayName": "Data Point Dot",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
         "panel": {
             "displayName": "Panels",
             "properties": {
@@ -66,24 +77,6 @@
                 "isArea": {
                     "type": {
                         "bool": true
-                    }
-                }
-            }
-        },
-        "valueFormat": {
-            "displayName": "Value Format",
-            "properties": {
-                "valueFormat": {
-                    "type": {
-                        "enumeration": [
-                            { "displayName": "Raw", "value": "raw" },
-                            {
-                                "displayName": "Percentage",
-                                "value": "percentage"
-                            },
-                            { "displayName": "Thousand", "value": "thousand" },
-                            { "displayName": "Million", "value": "million" }
-                        ]
                     }
                 }
             }
