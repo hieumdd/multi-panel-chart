@@ -14,7 +14,15 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import { groupBy, zip, flattenDepth, isEmpty, min, max, round } from 'lodash-es';
+import {
+    groupBy,
+    zip,
+    flattenDepth,
+    isEmpty,
+    min,
+    max,
+    round,
+} from 'lodash-es';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
@@ -83,7 +91,7 @@ const mapDataView = (dataView: DataView): Data[] => {
     return flattenDepth(matchedData, 1);
 };
 
-const buildOptions = (data: Data[]) => {
+const buildOptions = (data: Data[], settings: VisualSettings) => {
     const chain = '-';
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
@@ -134,7 +142,7 @@ const buildOptions = (data: Data[]) => {
         const [panelId, yAxisId, key, color, isArea] = id.split(chain);
         return {
             type: 'line',
-            symbol: 'none',
+            symbol: settings.dataPoint.dataPoint ? 'empty-circle' : 'none',
             name: `${panelId} - ${key}`,
             xAxisId: panelId,
             yAxisId: `${panelId}-${yAxisId}`,
@@ -188,7 +196,7 @@ export class Visual implements IVisual {
             return;
         }
 
-        const chartOptions = buildOptions(this.data);
+        const chartOptions = buildOptions(this.data, this.settings);
         console.log(chartOptions);
 
         this.chart.resize();
@@ -242,6 +250,16 @@ export class Visual implements IVisual {
                 return pushObjectEnum((objects) => ({
                     isArea: getIsArea(objects),
                 }));
+            case 'dataPoint':
+                return [
+                    {
+                        objectName,
+                        properties: {
+                            dataPoint: this.settings.dataPoint.dataPoint,
+                        },
+                        selector: null,
+                    },
+                ];
         }
         return [];
     }
