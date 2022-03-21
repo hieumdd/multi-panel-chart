@@ -41,13 +41,3 @@ export const getIsArea: GetEnumObjectsValue<IsArea> = (objects: DataViewObjects)
     });
     return objects && value ? value : false;
 };
-
-export const getValueFormat: GetEnumObjectsValue<ValueFormat> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getValue<ValueFormat>(objects, {
-        objectName: 'valueFormat',
-        propertyName: 'valueFormat',
-    });
-    return objects && value ? value : 'raw';
-};
