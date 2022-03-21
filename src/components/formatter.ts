@@ -17,4 +17,5 @@ const formatter = Object.fromEntries(
     ]),
 );
 
+export const nativeFormatter = (format: string) => valueFormatter.create({ format });
 export default formatter;

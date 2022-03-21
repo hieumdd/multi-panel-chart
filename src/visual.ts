@@ -33,7 +33,7 @@ import {
     getIsArea,
     getValueFormat,
 } from './enumObjects';
-import formatter from './components/formatter';
+import formatter, { nativeFormatter } from './components/formatter';
 
 type Data = {
     id: string;
@@ -44,7 +44,7 @@ type Data = {
     yAxisId: YAxis;
     color: Color;
     isArea: IsArea;
-    valueFormatterOption: ValueFormat;
+    valueFormatterOption: string;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -54,7 +54,7 @@ const mapDataView = (dataView: DataView): Data[] => {
 
     const dataObjects = dataView.metadata.columns
         .slice(1)
-        .map(({ objects }) => objects);
+        .map(({ format, objects }) => ({ format, objects }));
 
     const dataValues = rows
         .map((row) => <number[]>row.slice(1))
@@ -71,14 +71,14 @@ const mapDataView = (dataView: DataView): Data[] => {
         );
 
     const matchedData = zip(dateValues, dataValues).map(([date, values]) => {
-        return zip(values, dataObjects).map(([value, object]) => ({
+        return zip(values, dataObjects).map(([value, { format, objects }]) => ({
             ...value,
             date: new Date(date),
-            panelId: getPanel(object),
-            yAxisId: getYAxis(object),
-            color: getColor(object),
-            isArea: getIsArea(object),
-            valueFormatterOption: getValueFormat(object),
+            panelId: getPanel(objects),
+            yAxisId: getYAxis(objects),
+            color: getColor(objects),
+            isArea: getIsArea(objects),
+            valueFormatterOption: format || "#,0.00",
         }));
     });
 
@@ -132,7 +132,7 @@ const buildOptions = (data: Data[]) => {
             position: yAxisId,
             axisLabel: {
                 formatter: (value) =>
-                    formatter[valueFormatterOption].format(value),
+                    nativeFormatter(valueFormatterOption).format(value),
             },
         };
     });
@@ -152,8 +152,8 @@ const buildOptions = (data: Data[]) => {
         };
     });
 
-    const valueFormatters = Object.entries(seriesData).map(
-        ([id]) => formatter[id.split(chain).slice(-1).pop()],
+    const valueFormatters = Object.entries(seriesData).map(([id]) =>
+        nativeFormatter(id.split(chain).slice(-1).pop()),
     );
 
     return {
