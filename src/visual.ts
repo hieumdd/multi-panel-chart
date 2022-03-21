@@ -26,14 +26,12 @@ import {
     YAxis,
     Color,
     IsArea,
-    ValueFormat,
     getPanel,
     getYAxis,
     getColor,
     getIsArea,
-    getValueFormat,
 } from './enumObjects';
-import formatter, { nativeFormatter } from './components/formatter';
+import formatter from './components/formatter';
 
 type Data = {
     id: string;
@@ -44,7 +42,7 @@ type Data = {
     yAxisId: YAxis;
     color: Color;
     isArea: IsArea;
-    valueFormatterOption: string;
+    valueFormat: string;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -78,7 +76,7 @@ const mapDataView = (dataView: DataView): Data[] => {
             yAxisId: getYAxis(objects),
             color: getColor(objects),
             isArea: getIsArea(objects),
-            valueFormatterOption: format || "#,0.00",
+            valueFormat: format || '#,0.00',
         }));
     });
 
@@ -94,10 +92,8 @@ const buildOptions = (data: Data[]) => {
         [panelId, yAxisId].join(chain),
     );
     const seriesData = groupData(
-        ({ panelId, yAxisId, key, color, isArea, valueFormatterOption }) =>
-            [panelId, yAxisId, key, color, isArea, valueFormatterOption].join(
-                chain,
-            ),
+        ({ panelId, yAxisId, key, color, isArea, valueFormat }) =>
+            [panelId, yAxisId, key, color, isArea, valueFormat].join(chain),
     );
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
@@ -118,10 +114,7 @@ const buildOptions = (data: Data[]) => {
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
-        const valueFormatterOption = data.reduce(
-            (_, cur) => cur.valueFormatterOption,
-            '',
-        );
+        const valueFormat = data.reduce((_, cur) => cur.valueFormat, '');
         return {
             type: 'value',
             alignTick: true,
@@ -131,8 +124,7 @@ const buildOptions = (data: Data[]) => {
             max: max(cleanedData) * 1.01,
             position: yAxisId,
             axisLabel: {
-                formatter: (value) =>
-                    nativeFormatter(valueFormatterOption).format(value),
+                formatter: (value) => formatter(valueFormat).format(value),
             },
         };
     });
@@ -153,7 +145,7 @@ const buildOptions = (data: Data[]) => {
     });
 
     const valueFormatters = Object.entries(seriesData).map(([id]) =>
-        nativeFormatter(id.split(chain).slice(-1).pop()),
+        formatter(id.split(chain).slice(-1).pop()),
     );
 
     return {
@@ -248,10 +240,6 @@ export class Visual implements IVisual {
             case 'isArea':
                 return pushObjectEnum((objects) => ({
                     isArea: getIsArea(objects),
-                }));
-            case 'valueFormat':
-                return pushObjectEnum((objects) => ({
-                    valueFormat: getValueFormat(objects),
                 }));
         }
         return [];
