@@ -1,8 +1,12 @@
 import * as dayjs from 'dayjs';
 import { round } from 'lodash-es';
 
+import { dateFormatter } from './formatter';
+
 const formatter = ({ axisDimension, value }: any) =>
-    axisDimension === 'x' ? dayjs(value).format('YYYY-MM-DD') : round(value, 2);
+    axisDimension === 'x'
+        ? dateFormatter.format(dayjs(value).toDate())
+        : round(value, 2);
 
 const axisPointer = {
     snap: true,

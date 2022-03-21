@@ -14,7 +14,7 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import { groupBy, zip, flattenDepth, isEmpty, min, max } from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty, min, max, round } from 'lodash-es';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
@@ -31,7 +31,7 @@ import {
     getColor,
     getIsArea,
 } from './enumObjects';
-import formatter from './components/formatter';
+import { seriesFormatter } from './components/formatter';
 
 type Data = {
     id: string;
@@ -120,11 +120,12 @@ const buildOptions = (data: Data[]) => {
             alignTick: true,
             gridId: panelId,
             id: `${panelId}-${yAxisId}`,
-            min: min(cleanedData) * 0.99,
-            max: max(cleanedData) * 1.01,
+            min: round(min(cleanedData) * 0.99),
+            max: round(max(cleanedData) * 1.01),
             position: yAxisId,
             axisLabel: {
-                formatter: (value) => formatter(valueFormat).format(value),
+                formatter: (value) =>
+                    seriesFormatter(valueFormat).format(value),
             },
         };
     });
@@ -145,7 +146,7 @@ const buildOptions = (data: Data[]) => {
     });
 
     const valueFormatters = Object.entries(seriesData).map(([id]) =>
-        formatter(id.split(chain).slice(-1).pop()),
+        seriesFormatter(id.split(chain).slice(-1).pop()),
     );
 
     return {
