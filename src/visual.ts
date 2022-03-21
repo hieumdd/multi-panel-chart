@@ -1,5 +1,3 @@
-'use strict';
-
 import './../style/visual.less';
 import powerbi from 'powerbi-visuals-api';
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
@@ -28,7 +26,7 @@ import * as echarts from 'echarts';
 import { VisualSettings } from './settings';
 import getTooltip from './components/tooltip';
 import legend from './components/legend';
-import axisPointer from './components/axisPointer';
+import getAxisPointer from './components/axisPointer';
 import {
     Panel,
     YAxis,
@@ -39,7 +37,7 @@ import {
     getColor,
     getIsArea,
 } from './enumObjects';
-import { seriesFormatter } from './components/formatter';
+import formatter, { defaultFormat } from './components/formatter';
 
 type Data = {
     id: string;
@@ -84,14 +82,18 @@ const mapDataView = (dataView: DataView): Data[] => {
             yAxisId: getYAxis(objects),
             color: getColor(objects),
             isArea: getIsArea(objects),
-            valueFormat: format || '#,0.00',
+            valueFormat: format || defaultFormat,
         }));
     });
 
     return flattenDepth(matchedData, 1);
 };
 
-const buildOptions = (data: Data[], settings: VisualSettings) => {
+const buildOptions = (
+    data: Data[],
+    settings: VisualSettings,
+    dateFormat: string,
+) => {
     const chain = '-';
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
@@ -132,8 +134,8 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
             max: round(max(cleanedData) * 1.01),
             position: yAxisId,
             axisLabel: {
-                formatter: (value) =>
-                    seriesFormatter(valueFormat).format(value),
+                formatter: (value: number) =>
+                    formatter(valueFormat).format(value),
             },
         };
     });
@@ -154,13 +156,13 @@ const buildOptions = (data: Data[], settings: VisualSettings) => {
     });
 
     const valueFormatters = Object.entries(seriesData).map(([id]) =>
-        seriesFormatter(id.split(chain).slice(-1).pop()),
+        formatter(id.split(chain).slice(-1).pop()),
     );
 
     return {
         legend,
         tooltip: getTooltip(valueFormatters),
-        axisPointer,
+        axisPointer: getAxisPointer(dateFormat),
         grid,
         xAxis,
         yAxis,
@@ -196,7 +198,11 @@ export class Visual implements IVisual {
             return;
         }
 
-        const chartOptions = buildOptions(this.data, this.settings);
+        const chartOptions = buildOptions(
+            this.data,
+            this.settings,
+            this.dataView.metadata.columns[0].format,
+        );
         console.log(chartOptions);
 
         this.chart.resize();

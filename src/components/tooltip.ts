@@ -8,7 +8,7 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
     tooltipEl.className = 'tooltip';
 
     Object.values(groupBy(i, ({ axisIndex }) => axisIndex))
-        .map((panel, _, arr) =>
+        .map((panel) =>
             panel.map(({ marker, seriesName, value, seriesIndex }: any) => {
                 const seriesEl = document.createElement('div');
                 seriesEl.className = 'tooltip-series';

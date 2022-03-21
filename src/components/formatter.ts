@@ -1,5 +1,9 @@
 import { valueFormatter } from 'powerbi-visuals-utils-formattingutils';
 
-export const dateFormatter = valueFormatter.create({ format: 'D' });
+const formatter = (format: string) => valueFormatter.create({ format });
 
-export const seriesFormatter = (format: string) => valueFormatter.create({ format });
+export const defaultFormat = '#,0.00'
+
+export const defaultFormatter = formatter(defaultFormat);
+
+export default formatter;
