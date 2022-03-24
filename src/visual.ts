@@ -165,7 +165,7 @@ const buildOptions = (
 
     return {
         legend: getLegend(settings.legend.fontSize),
-        tooltip: getTooltip(valueFormatters),
+        tooltip: getTooltip(valueFormatters, settings.tooltip.fontSize),
         axisPointer: getAxisPointer(dateFormat),
         grid,
         xAxis,
@@ -254,6 +254,10 @@ export class Visual implements IVisual {
             case 'axis':
                 return pushObject({
                     fontSize: this.settings.axis.fontSize,
+                });
+            case 'tooltip':
+                return pushObject({
+                    fontSize: this.settings.tooltip.fontSize,
                 });
             case 'dataPoint':
                 return pushObject({

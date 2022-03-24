@@ -39,6 +39,17 @@
                 }
             }
         },
+        "tooltip": {
+            "displayName": "Tooltip",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
         "dataPoint": {
             "displayName": "Data Point",
             "properties": {

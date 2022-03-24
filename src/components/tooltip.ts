@@ -3,7 +3,7 @@ import IValueFormatter = valueFormatter.IValueFormatter;
 
 import { groupBy } from 'lodash-es';
 
-const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
+const formatter = (seriesValueFormatters: IValueFormatter[], fontSize: number) => (i: any) => {
     const tooltipEl = document.createElement('div');
     tooltipEl.className = 'tooltip';
 
@@ -15,12 +15,14 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
 
                 const labelEl = document.createElement('p');
                 labelEl.innerHTML = `${marker} ${seriesName}`;
+                labelEl.style.fontSize = `${fontSize}px`;
                 labelEl.style.fontWeight = '400';
 
                 const valueEl = document.createElement('p');
                 valueEl.innerHTML = `${
                     seriesValueFormatters[seriesIndex].format(value[1]) || '-'
                 }`;
+                valueEl.style.fontSize = `${fontSize}px`;
                 valueEl.style.fontWeight = '600';
 
                 [labelEl, valueEl].forEach((el) => seriesEl.appendChild(el));
@@ -40,7 +42,7 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
     return tooltipEl;
 };
 
-const getTooltip = (seriesValueFormatters: IValueFormatter[]) => ({
+const getTooltip = (seriesValueFormatters: IValueFormatter[], fontSize: number) => ({
     trigger: 'axis',
     className: 'tooltip-container',
     padding: '0px',
@@ -53,7 +55,7 @@ const getTooltip = (seriesValueFormatters: IValueFormatter[]) => ({
         top: '5%',
         [['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]]: '10%',
     }),
-    formatter: formatter(seriesValueFormatters),
+    formatter: formatter(seriesValueFormatters, fontSize),
 });
 
 export default getTooltip;
