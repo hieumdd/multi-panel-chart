@@ -36,7 +36,7 @@ const formatter = (seriesValueFormatters: IValueFormatter[]) => (i: any) => {
         })
         .forEach((el) => tooltipEl.appendChild(el));
 
-    tooltipEl.style.gap = `${30 / (tooltipEl.childElementCount - 0.5)}em`;
+    tooltipEl.style.gap = `${12 / (tooltipEl.childElementCount - 0.5)}em`;
     return tooltipEl;
 };
 
