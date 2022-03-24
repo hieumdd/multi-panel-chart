@@ -25,7 +25,7 @@ import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
 import getTooltip from './components/tooltip';
-import legend from './components/legend';
+import getLegend from './components/legend';
 import getAxisPointer from './components/axisPointer';
 import {
     Panel,
@@ -117,6 +117,9 @@ const buildOptions = (
         type: 'time',
         id,
         gridId: id,
+        axisLabel: {
+            fontSize: settings.axis.fontSize,
+        },
     }));
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
@@ -136,6 +139,7 @@ const buildOptions = (
             axisLabel: {
                 formatter: (value: number) =>
                     formatter(valueFormat).format(value),
+                fontSize: settings.axis.fontSize,
             },
         };
     });
@@ -160,7 +164,7 @@ const buildOptions = (
     );
 
     return {
-        legend,
+        legend: getLegend(settings.legend.fontSize),
         tooltip: getTooltip(valueFormatters),
         axisPointer: getAxisPointer(dateFormat),
         grid,
@@ -192,6 +196,7 @@ export class Visual implements IVisual {
         this.metadata = this.dataView.metadata;
 
         this.data = mapDataView(this.dataView);
+        console.log(this.settings);
         console.log(this.data);
 
         if (isEmpty(this.data)) {
@@ -218,6 +223,12 @@ export class Visual implements IVisual {
             return [];
         }
 
+        const pushObject = (properties: {
+            [key: string]: any;
+        }): VisualObjectInstanceEnumeration => [
+            { objectName, properties, selector: null },
+        ];
+
         const pushObjectEnum = (
             propertiesFn: (
                 DataViewObjects,
@@ -236,6 +247,18 @@ export class Visual implements IVisual {
             }));
 
         switch (objectName) {
+            case 'legend':
+                return pushObject({
+                    fontSize: this.settings.legend.fontSize,
+                });
+            case 'axis':
+                return pushObject({
+                    fontSize: this.settings.axis.fontSize,
+                });
+            case 'dataPoint':
+                return pushObject({
+                    dataPoint: this.settings.dataPoint.dataPoint,
+                });
             case 'panel':
                 return pushObjectEnum((objects) => ({
                     panel: getPanel(objects),
@@ -256,16 +279,6 @@ export class Visual implements IVisual {
                 return pushObjectEnum((objects) => ({
                     isArea: getIsArea(objects),
                 }));
-            case 'dataPoint':
-                return [
-                    {
-                        objectName,
-                        properties: {
-                            dataPoint: this.settings.dataPoint.dataPoint,
-                        },
-                        selector: null,
-                    },
-                ];
         }
         return [];
     }

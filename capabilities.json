@@ -17,6 +17,28 @@
         }
     ],
     "objects": {
+        "legend": {
+            "displayName": "Legend",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "axis": {
+            "displayName": "Axis",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
         "dataPoint": {
             "displayName": "Data Point",
             "properties": {
