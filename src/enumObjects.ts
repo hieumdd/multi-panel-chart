@@ -31,7 +31,7 @@ export const getColor: GetEnumObjectsValue<Color> = (objects: DataViewObjects) =
         objectName: 'color',
         propertyName: 'color',
     });
-    return objects && value ? value : '#000000';
+    return objects && value ? value : '#333333';
 };
 
 export const getIsArea: GetEnumObjectsValue<IsArea> = (objects: DataViewObjects) => {

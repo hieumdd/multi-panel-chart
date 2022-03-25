@@ -3,46 +3,67 @@ import IValueFormatter = valueFormatter.IValueFormatter;
 
 import { groupBy } from 'lodash-es';
 
-const formatter = (seriesValueFormatters: IValueFormatter[], fontSize: number) => (i: any) => {
-    const tooltipEl = document.createElement('div');
-    tooltipEl.className = 'tooltip';
+const getContrastColor = (bgColor: string) =>
+    parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2 ? '#333333' : '#ffffff';
 
-    Object.values(groupBy(i, ({ axisIndex }) => axisIndex))
-        .map((panel) =>
-            panel.map(({ marker, seriesName, value, seriesIndex }: any) => {
-                const seriesEl = document.createElement('div');
-                seriesEl.className = 'tooltip-series';
+const formatter =
+    (seriesValueFormatters: IValueFormatter[], fontSize: number) =>
+    (i: any) => {
+        const tooltipEl = document.createElement('div');
+        tooltipEl.className = 'tooltip';
 
-                const labelEl = document.createElement('p');
-                labelEl.innerHTML = `${marker} ${seriesName}`;
-                labelEl.style.fontSize = `${fontSize}px`;
-                labelEl.style.fontWeight = '400';
+        Object.values(groupBy(i, ({ axisIndex }) => axisIndex))
+            .map((panel) =>
+                panel.map(
+                    ({
+                        seriesName,
+                        value,
+                        seriesIndex,
+                        color,
+                    }: any) => {
+                        const seriesEl = document.createElement('div');
+                        seriesEl.className = 'tooltip-series';
+                        seriesEl.style.backgroundColor = color;
+                        seriesEl.style.color = getContrastColor(color);
 
-                const valueEl = document.createElement('p');
-                valueEl.innerHTML = `${
-                    seriesValueFormatters[seriesIndex].format(value[1]) || '-'
-                }`;
-                valueEl.style.fontSize = `${fontSize}px`;
-                valueEl.style.fontWeight = '600';
+                        const labelEl = document.createElement('p');
+                        labelEl.innerHTML = `${seriesName}`;
+                        labelEl.style.fontSize = `${fontSize}px`;
+                        labelEl.style.fontWeight = '400';
 
-                [labelEl, valueEl].forEach((el) => seriesEl.appendChild(el));
+                        const valueEl = document.createElement('p');
+                        valueEl.innerHTML = `${
+                            seriesValueFormatters[seriesIndex].format(
+                                value[1],
+                            ) || '-'
+                        }`;
+                        valueEl.style.fontSize = `${fontSize}px`;
+                        valueEl.style.fontWeight = '600';
 
-                return seriesEl;
-            }),
-        )
-        .map((seriesEls) => {
-            const panelEl = document.createElement('div');
-            panelEl.className = 'tooltip-panel';
-            seriesEls.forEach((el) => panelEl.appendChild(el));
-            return panelEl;
-        })
-        .forEach((el) => tooltipEl.appendChild(el));
+                        [labelEl, valueEl].forEach((el) =>
+                            seriesEl.appendChild(el),
+                        );
 
-    tooltipEl.style.gap = `${12 / (tooltipEl.childElementCount - 0.5)}em`;
-    return tooltipEl;
-};
+                        return seriesEl;
+                    },
+                ),
+            )
+            .map((seriesEls) => {
+                const panelEl = document.createElement('div');
+                panelEl.className = 'tooltip-panel';
+                seriesEls.forEach((el) => panelEl.appendChild(el));
+                return panelEl;
+            })
+            .forEach((el) => tooltipEl.appendChild(el));
 
-const getTooltip = (seriesValueFormatters: IValueFormatter[], fontSize: number) => ({
+        tooltipEl.style.gap = `${12 / (tooltipEl.childElementCount - 0.5)}em`;
+        return tooltipEl;
+    };
+
+const getTooltip = (
+    seriesValueFormatters: IValueFormatter[],
+    fontSize: number,
+) => ({
     trigger: 'axis',
     className: 'tooltip-container',
     padding: '0px',
