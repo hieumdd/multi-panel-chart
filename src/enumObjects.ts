@@ -6,11 +6,14 @@ type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
 
 export type Panel = '1' | '2' | '3' | '4' | '5';
 export type YAxis = 'left' | 'right';
+export type isInverse = boolean;
 export type Color = string;
 export type IsArea = boolean;
 export type ValueFormat = 'raw' | 'percentage' | 'thousand' | 'million';
 
-export const getPanel: GetEnumObjectsValue<Panel> = (objects: DataViewObjects) => {
+export const getPanel: GetEnumObjectsValue<Panel> = (
+    objects: DataViewObjects,
+) => {
     const value = dataViewObjects.getValue<Panel>(objects, {
         objectName: 'panel',
         propertyName: 'panel',
@@ -18,7 +21,9 @@ export const getPanel: GetEnumObjectsValue<Panel> = (objects: DataViewObjects) =
     return objects && value ? value : '1';
 };
 
-export const getYAxis: GetEnumObjectsValue<YAxis> = (objects: DataViewObjects) => {
+export const getYAxis: GetEnumObjectsValue<YAxis> = (
+    objects: DataViewObjects,
+) => {
     const value = dataViewObjects.getValue<YAxis>(objects, {
         objectName: 'yAxisAlign',
         propertyName: 'yAxisAlign',
@@ -26,7 +31,19 @@ export const getYAxis: GetEnumObjectsValue<YAxis> = (objects: DataViewObjects) =
     return objects && value ? value : 'left';
 };
 
-export const getColor: GetEnumObjectsValue<Color> = (objects: DataViewObjects) => {
+export const getisInverse: GetEnumObjectsValue<isInverse> = (
+    objects: DataViewObjects,
+) => {
+    const value = dataViewObjects.getValue<isInverse>(objects, {
+        objectName: 'isInverse',
+        propertyName: 'isInverse',
+    });
+    return objects && value ? value : false;
+};
+
+export const getColor: GetEnumObjectsValue<Color> = (
+    objects: DataViewObjects,
+) => {
     const value = dataViewObjects.getFillColor(objects, {
         objectName: 'color',
         propertyName: 'color',
@@ -34,7 +51,9 @@ export const getColor: GetEnumObjectsValue<Color> = (objects: DataViewObjects) =
     return objects && value ? value : '#333333';
 };
 
-export const getIsArea: GetEnumObjectsValue<IsArea> = (objects: DataViewObjects) => {
+export const getIsArea: GetEnumObjectsValue<IsArea> = (
+    objects: DataViewObjects,
+) => {
     const value = dataViewObjects.getValue<IsArea>(objects, {
         objectName: 'isArea',
         propertyName: 'isArea',

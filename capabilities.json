@@ -90,6 +90,16 @@
                 }
             }
         },
+        "isInverse": {
+            "displayName": "Y Axis Invert",
+            "properties": {
+                "isInverse": {
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
         "color": {
             "displayName": "Series Color",
             "properties": {

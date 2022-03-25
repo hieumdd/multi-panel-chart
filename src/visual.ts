@@ -30,12 +30,14 @@ import getAxisPointer from './components/axisPointer';
 import {
     Panel,
     YAxis,
+    isInverse,
     Color,
     IsArea,
     getPanel,
     getYAxis,
     getColor,
     getIsArea,
+    getisInverse,
 } from './enumObjects';
 import formatter, { defaultFormat } from './components/formatter';
 
@@ -49,6 +51,7 @@ type Data = {
     color: Color;
     isArea: IsArea;
     valueFormat: string;
+    isInverse: isInverse;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -83,6 +86,7 @@ const mapDataView = (dataView: DataView): Data[] => {
             color: getColor(objects),
             isArea: getIsArea(objects),
             valueFormat: format || defaultFormat,
+            isInverse: getisInverse(objects),
         })),
     );
 
@@ -128,15 +132,16 @@ const buildOptions = (
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
+        const isInverse = data.reduce((_, cur) => cur.isInverse, false);
         const valueFormat = data.reduce((_, cur) => cur.valueFormat, '');
         return {
             type: 'value',
-            alignTick: true,
             gridId: panelId,
             id: `${panelId}-${yAxisId}`,
             min: round(min(cleanedData) * 0.99),
             max: round(max(cleanedData) * 1.01),
             position: yAxisId,
+            inverse: isInverse,
             axisLabel: {
                 formatter: (value: number) =>
                     formatter(valueFormat).format(value),
@@ -273,6 +278,10 @@ export class Visual implements IVisual {
             case 'yAxisAlign':
                 return pushObjectEnum((objects) => ({
                     yAxisAlign: getYAxis(objects),
+                }));
+            case 'isInverse':
+                return pushObjectEnum((objects) => ({
+                    isInverse: getisInverse(objects),
                 }));
             case 'color':
                 return pushObjectEnum((objects) => ({
