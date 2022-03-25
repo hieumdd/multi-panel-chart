@@ -110,7 +110,8 @@ const buildOptions = (
         id,
         top: `${i * (100 / arr.length) + 5}%`,
         height: `${(100 / arr.length) * 0.5}%`,
-        right: '25%',
+        left: '5%',
+        right: '15%',
     }));
 
     const xAxis = Object.entries(panelData).map(([id]) => ({
