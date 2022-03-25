@@ -111,7 +111,7 @@ const buildOptions = (
         top: `${i * (100 / arr.length) + 5}%`,
         height: `${(100 / arr.length) * 0.5}%`,
         left: '5%',
-        right: '20%',
+        right: '22%',
     }));
 
     const xAxis = Object.entries(panelData).map(([id]) => ({
@@ -166,7 +166,11 @@ const buildOptions = (
 
     return {
         legend: getLegend(settings.legend.fontSize),
-        tooltip: getTooltip(valueFormatters, settings.tooltip.fontSize),
+        tooltip: getTooltip(
+            valueFormatters,
+            settings.tooltip.fontSize,
+            settings.tooltip.panelGap,
+        ),
         axisPointer: getAxisPointer(dateFormat),
         grid,
         xAxis,
@@ -261,6 +265,7 @@ export class Visual implements IVisual {
             case 'tooltip':
                 return pushObject({
                     fontSize: this.settings.tooltip.fontSize,
+                    panelGap: this.settings.tooltip.panelGap,
                 });
             case 'dataPoint':
                 return pushObject({
