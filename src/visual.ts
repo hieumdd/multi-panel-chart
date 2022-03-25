@@ -111,7 +111,7 @@ const buildOptions = (
         top: `${i * (100 / arr.length) + 5}%`,
         height: `${(100 / arr.length) * 0.5}%`,
         left: '5%',
-        right: '15%',
+        right: '20%',
     }));
 
     const xAxis = Object.entries(panelData).map(([id]) => ({
@@ -185,7 +185,9 @@ export class Visual implements IVisual {
 
     constructor(options: VisualConstructorOptions) {
         this.target = options.element;
-        this.chart = echarts.init(this.target);
+        this.chart = echarts.init(this.target, '', {
+            renderer: 'svg',
+        });
     }
 
     public update(options: VisualUpdateOptions) {
