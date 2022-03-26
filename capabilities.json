@@ -47,6 +47,12 @@
                     "type": {
                         "numeric": true
                     }
+                },
+                "panelGap": {
+                    "displayName": "Panel Gap (em)",
+                    "type": {
+                        "numeric": true
+                    }
                 }
             }
         },

@@ -11,6 +11,7 @@ export class AxisSettings {
 
 export class TooltipSettings {
     public fontSize: number = 12;
+    public panelGap: number = 4;
 }
 
 export class DataPointSettings {
