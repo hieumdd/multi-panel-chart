@@ -96,10 +96,10 @@
                 }
             }
         },
-        "isInverse": {
+        "yAxisInverse": {
             "displayName": "Y Axis Invert",
             "properties": {
-                "isInverse": {
+                "yAxisInverse": {
                     "type": {
                         "bool": true
                     }

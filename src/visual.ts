@@ -29,15 +29,15 @@ import getLegend from './components/legend';
 import getAxisPointer from './components/axisPointer';
 import {
     Panel,
-    YAxis,
-    isInverse,
+    YAxisAlign,
+    YAxisInverse,
     Color,
     IsArea,
     getPanel,
-    getYAxis,
+    getYAxisAlign,
     getColor,
     getIsArea,
-    getisInverse,
+    getYAxyAxisInverse,
 } from './enumObjects';
 import formatter, { defaultFormat } from './components/formatter';
 
@@ -47,11 +47,11 @@ type Data = {
     key: string;
     value: number;
     panelId: Panel;
-    yAxisId: YAxis;
+    yAxisId: YAxisAlign;
     color: Color;
     isArea: IsArea;
     valueFormat: string;
-    isInverse: isInverse;
+    yAxisInverse: YAxisInverse;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -82,11 +82,11 @@ const mapDataView = (dataView: DataView): Data[] => {
             ...value,
             date: new Date(date),
             panelId: getPanel(objects),
-            yAxisId: getYAxis(objects),
+            yAxisId: getYAxisAlign(objects),
             color: getColor(objects),
             isArea: getIsArea(objects),
             valueFormat: format || defaultFormat,
-            isInverse: getisInverse(objects),
+            yAxisInverse: getYAxyAxisInverse(objects),
         })),
     );
 
@@ -114,7 +114,7 @@ const buildOptions = (
         id,
         // top: `${i * (100 / arr.length) + 5}%`,
         top: `${i * (90 / arr.length) + 5}%`,
-        height: `${(90 / arr.length) - 5}%`,
+        height: `${90 / arr.length - 5}%`,
         left: '5%',
         right: '22%',
     }));
@@ -134,7 +134,7 @@ const buildOptions = (
         const cleanedData = data
             .map(({ value }) => value)
             .filter((x) => x === 0 || !!x);
-        const isInverse = data.reduce((_, cur) => cur.isInverse, false);
+        const yAxisInverse = data.reduce((_, cur) => cur.yAxisInverse, false);
         const valueFormat = data.reduce((_, cur) => cur.valueFormat, '');
         return {
             type: 'value',
@@ -143,7 +143,7 @@ const buildOptions = (
             min: round(min(cleanedData) * 0.99),
             max: round(max(cleanedData) * 1.01),
             position: yAxisId,
-            inverse: isInverse,
+            inverse: yAxisInverse,
             axisLabel: {
                 formatter: (value: number) =>
                     formatter(valueFormat).format(value),
@@ -284,11 +284,11 @@ export class Visual implements IVisual {
                 }));
             case 'yAxisAlign':
                 return pushObjectEnum((objects) => ({
-                    yAxisAlign: getYAxis(objects),
+                    yAxisAlign: getYAxisAlign(objects),
                 }));
-            case 'isInverse':
+            case 'yAxisInverse':
                 return pushObjectEnum((objects) => ({
-                    isInverse: getisInverse(objects),
+                    yAxisInverse: getYAxyAxisInverse(objects),
                 }));
             case 'color':
                 return pushObjectEnum((objects) => ({

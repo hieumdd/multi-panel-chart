@@ -5,8 +5,8 @@ import { dataViewObjects } from 'powerbi-visuals-utils-dataviewutils';
 type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
 
 export type Panel = '1' | '2' | '3' | '4' | '5';
-export type YAxis = 'left' | 'right';
-export type isInverse = boolean;
+export type YAxisAlign = 'left' | 'right';
+export type YAxisInverse = boolean;
 export type Color = string;
 export type IsArea = boolean;
 export type ValueFormat = 'raw' | 'percentage' | 'thousand' | 'million';
@@ -21,22 +21,22 @@ export const getPanel: GetEnumObjectsValue<Panel> = (
     return objects && value ? value : '1';
 };
 
-export const getYAxis: GetEnumObjectsValue<YAxis> = (
+export const getYAxisAlign: GetEnumObjectsValue<YAxisAlign> = (
     objects: DataViewObjects,
 ) => {
-    const value = dataViewObjects.getValue<YAxis>(objects, {
+    const value = dataViewObjects.getValue<YAxisAlign>(objects, {
         objectName: 'yAxisAlign',
         propertyName: 'yAxisAlign',
     });
     return objects && value ? value : 'left';
 };
 
-export const getisInverse: GetEnumObjectsValue<isInverse> = (
+export const getYAxyAxisInverse: GetEnumObjectsValue<YAxisInverse> = (
     objects: DataViewObjects,
 ) => {
-    const value = dataViewObjects.getValue<isInverse>(objects, {
-        objectName: 'isInverse',
-        propertyName: 'isInverse',
+    const value = dataViewObjects.getValue<YAxisInverse>(objects, {
+        objectName: 'yAxisInverse',
+        propertyName: 'yAxisInverse',
     });
     return objects && value ? value : false;
 };
