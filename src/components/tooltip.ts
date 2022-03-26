@@ -65,7 +65,6 @@ const getTooltip = (
 ) => ({
     trigger: 'axis',
     className: 'tooltip-container',
-    padding: '0px',
     backgroundColor: 'rgba(50,50,50,0.0)',
     extraCssText: 'box-shadow: none;',
     axisPointer: {
