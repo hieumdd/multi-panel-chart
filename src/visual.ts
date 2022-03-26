@@ -108,8 +108,9 @@ const buildOptions = (
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
         id,
-        top: `${i * (100 / arr.length) + 5}%`,
-        height: `${(100 / arr.length) * 0.5}%`,
+        // top: `${i * (100 / arr.length) + 5}%`,
+        top: `${i * (90 / arr.length) + 5}%`,
+        height: `${(90 / arr.length) - 5}%`,
         left: '5%',
         right: '22%',
     }));
@@ -118,6 +119,7 @@ const buildOptions = (
         type: 'time',
         id,
         gridId: id,
+        axisLine: { show: false },
         axisLabel: {
             fontSize: settings.axis.fontSize,
         },
