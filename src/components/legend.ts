@@ -5,6 +5,8 @@ const getLegend = (fontSize: number) => ({
     textStyle: {
         fontSize,
     },
+    formatter: (name: string) =>
+        name.length >= 25 ? `${name.slice(0, 25)}...` : name,
 });
 
 export default getLegend;
