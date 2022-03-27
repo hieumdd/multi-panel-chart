@@ -7,6 +7,11 @@ type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
 export type Panel = '1' | '2' | '3' | '4' | '5';
 export type YAxisAlign = 'left' | 'right';
 export type YAxisInverse = boolean;
+export type YAxisMinMax = {
+    override: boolean;
+    min: number;
+    max: number;
+};
 export type Color = string;
 export type IsArea = boolean;
 export type ValueFormat = 'raw' | 'percentage' | 'thousand' | 'million';
@@ -31,7 +36,7 @@ export const getYAxisAlign: GetEnumObjectsValue<YAxisAlign> = (
     return objects && value ? value : 'left';
 };
 
-export const getYAxyAxisInverse: GetEnumObjectsValue<YAxisInverse> = (
+export const getYAxisInverse: GetEnumObjectsValue<YAxisInverse> = (
     objects: DataViewObjects,
 ) => {
     const value = dataViewObjects.getValue<YAxisInverse>(objects, {
@@ -39,6 +44,28 @@ export const getYAxyAxisInverse: GetEnumObjectsValue<YAxisInverse> = (
         propertyName: 'yAxisInverse',
     });
     return objects && value ? value : false;
+};
+
+export const getYAxisMinMax: GetEnumObjectsValue<YAxisMinMax> = (
+    objects: DataViewObjects,
+) => {
+    const defaultOptions = [
+        ['override', false],
+        ['min', 0],
+        ['max', 100],
+    ];
+    const options = defaultOptions.map(
+        ([propertyName, default_]: [string, any]) => [
+            propertyName,
+            dataViewObjects.getValue(objects, {
+                objectName: 'yAxisMinMax',
+                propertyName,
+            }) || default_,
+        ],
+    );
+    return objects
+        ? Object.fromEntries(options)
+        : Object.fromEntries(defaultOptions);
 };
 
 export const getColor: GetEnumObjectsValue<Color> = (

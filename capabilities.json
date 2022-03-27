@@ -106,6 +106,26 @@
                 }
             }
         },
+        "yAxisMinMax": {
+            "displayName": "Y Axis Min/Max",
+            "properties": {
+                "override": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "min": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "max": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
         "color": {
             "displayName": "Series Color",
             "properties": {

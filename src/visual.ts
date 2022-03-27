@@ -37,7 +37,9 @@ import {
     getYAxisAlign,
     getColor,
     getIsArea,
-    getYAxyAxisInverse,
+    getYAxisInverse,
+    getYAxisMinMax,
+    YAxisMinMax,
 } from './enumObjects';
 import formatter, { defaultFormat } from './components/formatter';
 
@@ -52,6 +54,7 @@ type Data = {
     isArea: IsArea;
     valueFormat: string;
     yAxisInverse: YAxisInverse;
+    yAxisMinMax: YAxisMinMax;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -86,7 +89,8 @@ const mapDataView = (dataView: DataView): Data[] => {
             color: getColor(objects),
             isArea: getIsArea(objects),
             valueFormat: format || defaultFormat,
-            yAxisInverse: getYAxyAxisInverse(objects),
+            yAxisInverse: getYAxisInverse(objects),
+            yAxisMinMax: getYAxisMinMax(objects),
         })),
     );
 
@@ -130,17 +134,18 @@ const buildOptions = (
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
         const [panelId, yAxisId] = id.split(chain);
-        const cleanedData = data
-            .map(({ value }) => value)
-            .filter((x) => x === 0 || !!x);
         const yAxisInverse = data.reduce((_, cur) => cur.yAxisInverse, false);
+        const { override, min, max } = data.reduce(
+            (_, cur) => cur.yAxisMinMax,
+            { override: undefined, min: 0, max: 100 },
+        );
         const valueFormat = data.reduce((_, cur) => cur.valueFormat, '');
         return {
             type: 'value',
             gridId: panelId,
             id: `${panelId}-${yAxisId}`,
-            min: round(min(cleanedData) * 0.99),
-            max: round(max(cleanedData) * 1.01),
+            min: (value: { min: number }) => (override ? min : value.min),
+            max: (value: { max: number }) => (override ? max : value.max),
             position: yAxisId,
             inverse: yAxisInverse,
             axisLabel: {
@@ -287,8 +292,13 @@ export class Visual implements IVisual {
                 }));
             case 'yAxisInverse':
                 return pushObjectEnum((objects) => ({
-                    yAxisInverse: getYAxyAxisInverse(objects),
+                    yAxisInverse: getYAxisInverse(objects),
                 }));
+            case 'yAxisMinMax':
+                return pushObjectEnum((objects) => {
+                    const { override, min, max } = getYAxisMinMax(objects);
+                    return { override, min, max };
+                });
             case 'color':
                 return pushObjectEnum((objects) => ({
                     color: {
