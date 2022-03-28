@@ -83,51 +83,41 @@
                 }
             }
         },
-        "yAxisAlign": {
-            "displayName": "Y Axis Align",
+        "yAxis": {
+            "displayName": "Y Axis",
             "properties": {
-                "yAxisAlign": {
+                "align": {
                     "type": {
                         "enumeration": [
                             { "displayName": "Left", "value": "left" },
                             { "displayName": "Right", "value": "right" }
                         ]
                     }
-                }
-            }
-        },
-        "yAxisInverse": {
-            "displayName": "Y Axis Invert",
-            "properties": {
-                "yAxisInverse": {
-                    "type": {
-                        "bool": true
-                    }
-                }
-            }
-        },
-        "yAxisMinMax": {
-            "displayName": "Y Axis Min/Max",
-            "properties": {
-                "override": {
+                },
+                "inverse": {
                     "type": {
                         "bool": true
                     }
                 },
-                "min": {
+                "mmOverride": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "mmMin": {
                     "type": {
                         "numeric": true
                     }
                 },
-                "max": {
+                "mmMax": {
                     "type": {
                         "numeric": true
                     }
                 }
             }
         },
-        "color": {
-            "displayName": "Series Color",
+        "series": {
+            "displayName": "Series",
             "properties": {
                 "color": {
                     "type": {
@@ -137,13 +127,8 @@
                             }
                         }
                     }
-                }
-            }
-        },
-        "isArea": {
-            "displayName": "Series Area Chart",
-            "properties": {
-                "isArea": {
+                },
+                "area": {
                     "type": {
                         "bool": true
                     }
