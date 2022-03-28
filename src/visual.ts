@@ -12,15 +12,7 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import {
-    groupBy,
-    zip,
-    flattenDepth,
-    isEmpty,
-    min,
-    max,
-    round,
-} from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty } from 'lodash-es';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
@@ -28,18 +20,17 @@ import getTooltip from './components/tooltip';
 import getLegend from './components/legend';
 import getAxisPointer from './components/axisPointer';
 import {
-    Panel,
-    YAxisAlign,
-    YAxisInverse,
-    Color,
-    IsArea,
+    EnumObject,
+    PanelOptions,
+    panelEnum,
+    YAxisOptions,
+    yAxisEnum,
+    SeriesOptions,
+    seriesEnum,
+    getDefaultOption,
     getPanel,
-    getYAxisAlign,
-    getColor,
-    getIsArea,
-    getYAxisInverse,
-    getYAxisMinMax,
-    YAxisMinMax,
+    getYAxis,
+    getSeries,
 } from './enumObjects';
 import formatter, { defaultFormat } from './components/formatter';
 
@@ -48,13 +39,10 @@ type Data = {
     date: Date;
     key: string;
     value: number;
-    panelId: Panel;
-    yAxisId: YAxisAlign;
-    color: Color;
-    isArea: IsArea;
+    panel: PanelOptions;
+    yAxis: YAxisOptions;
+    series: SeriesOptions;
     valueFormat: string;
-    yAxisInverse: YAxisInverse;
-    yAxisMinMax: YAxisMinMax;
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -84,13 +72,10 @@ const mapDataView = (dataView: DataView): Data[] => {
         zip(values, dataObjects).map(([value, { format, objects }]) => ({
             ...value,
             date: new Date(date),
-            panelId: getPanel(objects),
-            yAxisId: getYAxisAlign(objects),
-            color: getColor(objects),
-            isArea: getIsArea(objects),
+            panel: getPanel(objects),
+            yAxis: getYAxis(objects),
+            series: getSeries(objects),
             valueFormat: format || defaultFormat,
-            yAxisInverse: getYAxisInverse(objects),
-            yAxisMinMax: getYAxisMinMax(objects),
         })),
     );
 
@@ -105,13 +90,12 @@ const buildOptions = (
     const chain = '-';
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
-    const panelData = groupData(({ panelId }) => panelId);
-    const axisData = groupData(({ panelId, yAxisId }) =>
-        [panelId, yAxisId].join(chain),
+    const panelData = groupData(({ panel }) => panel.panel);
+    const axisData = groupData(({ panel, yAxis }) =>
+        [panel.panel, yAxis.align].join(chain),
     );
-    const seriesData = groupData(
-        ({ panelId, yAxisId, key, color, isArea, valueFormat }) =>
-            [panelId, yAxisId, key, color, isArea, valueFormat].join(chain),
+    const seriesData = groupData(({ panel, yAxis, key, valueFormat }) =>
+        [panel.panel, yAxis.align, key, valueFormat].join(chain),
     );
 
     const grid = Object.entries(panelData).map(([id], i, arr) => ({
@@ -133,21 +117,21 @@ const buildOptions = (
     }));
 
     const yAxis = Object.entries(axisData).map(([id, data]) => {
-        const [panelId, yAxisId] = id.split(chain);
-        const yAxisInverse = data.reduce((_, cur) => cur.yAxisInverse, false);
-        const { override, min, max } = data.reduce(
-            (_, cur) => cur.yAxisMinMax,
-            { override: undefined, min: 0, max: 100 },
+        const [panel, align] = id.split(chain);
+        const { inverse, mmOverride, mmMin, mmMax } = data.reduce(
+            (_, cur) => cur.yAxis,
+            getDefaultOption(yAxisEnum),
         );
         const valueFormat = data.reduce((_, cur) => cur.valueFormat, '');
+
         return {
             type: 'value',
-            gridId: panelId,
-            id: `${panelId}-${yAxisId}`,
-            min: (value: { min: number }) => (override ? min : value.min),
-            max: (value: { max: number }) => (override ? max : value.max),
-            position: yAxisId,
-            inverse: yAxisInverse,
+            gridId: panel,
+            id: `${panel}-${align}`,
+            min: (value: { min: number }) => (mmOverride ? mmMin : value.min),
+            max: (value: { max: number }) => (mmOverride ? mmMax : value.max),
+            position: align,
+            inverse,
             axisLabel: {
                 formatter: (value: number) =>
                     formatter(valueFormat).format(value),
@@ -157,17 +141,21 @@ const buildOptions = (
     });
 
     const series = Object.entries(seriesData).map(([id, data]) => {
-        const [panelId, yAxisId, key, color, isArea] = id.split(chain);
+        const [panel, yAxis, key, _] = id.split(chain);
+        const { color, area } = data.reduce(
+            (_, cur) => cur.series,
+            getDefaultOption(seriesEnum),
+        );
         return {
             type: 'line',
             symbol: settings.dataPoint.dataPoint ? 'empty-circle' : 'none',
-            name: `${panelId} - ${key}`,
-            xAxisId: panelId,
-            yAxisId: `${panelId}-${yAxisId}`,
+            name: `${panel} - ${key}`,
+            xAxisId: panel,
+            yAxisId: `${panel}-${yAxis}`,
             data: data.map(({ date, value }) => [date, value]),
             lineStyle: { color },
             itemStyle: { color },
-            areaStyle: JSON.parse(isArea) ? { color } : null,
+            areaStyle: area ? { color } : null,
         };
     });
 
@@ -241,28 +229,39 @@ export class Visual implements IVisual {
             return [];
         }
 
-        const pushObject = (properties: {
-            [key: string]: any;
-        }): VisualObjectInstanceEnumeration => [
+        const pushObject = (properties: { [key: string]: any }) => [
             { objectName, properties, selector: null },
         ];
 
-        const pushObjectEnum = (
+        const pushObjectEnum = <T>(
+            displayName: EnumObject<T>,
             propertiesFn: (
                 DataViewObjects,
             ) => VisualObjectInstance['properties'],
-        ): VisualObjectInstanceEnumeration =>
-            zip(
+        ) => {
+            const dataWithObjects = zip(
                 this.metadata.columns.slice(1),
                 Object.entries(groupBy(this.data, ({ key }) => key)),
-            ).map(([{ queryName, objects }, [key]]) => ({
-                objectName,
-                displayName: key,
-                properties: propertiesFn(objects),
-                selector: {
-                    metadata: queryName,
+            );
+            const objectEnums = dataWithObjects.map(
+                ([{ queryName, objects }, [key]]) => {
+                    const props = propertiesFn(objects);
+                    return Object.entries(props).map(
+                        ([propsKey, propsValue]) => ({
+                            objectName,
+                            properties: {
+                                [propsKey]: propsValue,
+                            },
+                            displayName: `${displayName[propsKey].displayName} - ${key}`,
+                            selector: {
+                                metadata: queryName,
+                            },
+                        }),
+                    );
                 },
-            }));
+            );
+            return flattenDepth(objectEnums, 1);
+        };
 
         switch (objectName) {
             case 'legend':
@@ -283,34 +282,17 @@ export class Visual implements IVisual {
                     dataPoint: this.settings.dataPoint.dataPoint,
                 });
             case 'panel':
-                return pushObjectEnum((objects) => ({
-                    panel: getPanel(objects),
-                }));
-            case 'yAxisAlign':
-                return pushObjectEnum((objects) => ({
-                    yAxisAlign: getYAxisAlign(objects),
-                }));
-            case 'yAxisInverse':
-                return pushObjectEnum((objects) => ({
-                    yAxisInverse: getYAxisInverse(objects),
-                }));
-            case 'yAxisMinMax':
-                return pushObjectEnum((objects) => {
-                    const { override, min, max } = getYAxisMinMax(objects);
-                    return { override, min, max };
+                return pushObjectEnum(panelEnum, getPanel);
+            case 'yAxis':
+                return pushObjectEnum(yAxisEnum, getYAxis);
+            case 'series':
+                return pushObjectEnum(seriesEnum, (objects) => {
+                    const { color, area } = getSeries(objects);
+                    return {
+                        color: { solid: { color } },
+                        area,
+                    };
                 });
-            case 'color':
-                return pushObjectEnum((objects) => ({
-                    color: {
-                        solid: {
-                            color: getColor(objects),
-                        },
-                    },
-                }));
-            case 'isArea':
-                return pushObjectEnum((objects) => ({
-                    isArea: getIsArea(objects),
-                }));
         }
         return [];
     }

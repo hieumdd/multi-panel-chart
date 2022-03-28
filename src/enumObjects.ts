@@ -2,88 +2,77 @@ import powerbi from 'powerbi-visuals-api';
 import DataViewObjects = powerbi.DataViewObjects;
 import { dataViewObjects } from 'powerbi-visuals-utils-dataviewutils';
 
-type GetEnumObjectsValue<T> = (objects: DataViewObjects) => T;
-
-export type Panel = '1' | '2' | '3' | '4' | '5';
-export type YAxisAlign = 'left' | 'right';
-export type YAxisInverse = boolean;
-export type YAxisMinMax = {
-    override: boolean;
-    min: number;
-    max: number;
+export type PanelOptions = {
+    panel: '1' | '2' | '3' | '4' | '5';
 };
-export type Color = string;
-export type IsArea = boolean;
-export type ValueFormat = 'raw' | 'percentage' | 'thousand' | 'million';
-
-export const getPanel: GetEnumObjectsValue<Panel> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getValue<Panel>(objects, {
-        objectName: 'panel',
-        propertyName: 'panel',
-    });
-    return objects && value ? value : '1';
+export type YAxisOptions = {
+    align: 'left' | 'right';
+    inverse: boolean;
+    mmOverride: boolean;
+    mmMin: number;
+    mmMax: number;
+};
+export type SeriesOptions = {
+    color: string;
+    area: boolean;
 };
 
-export const getYAxisAlign: GetEnumObjectsValue<YAxisAlign> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getValue<YAxisAlign>(objects, {
-        objectName: 'yAxisAlign',
-        propertyName: 'yAxisAlign',
-    });
-    return objects && value ? value : 'left';
+export type EnumObject<T> = {
+    [key in keyof T]: {
+        displayName: string;
+        default_: T[key];
+    };
 };
 
-export const getYAxisInverse: GetEnumObjectsValue<YAxisInverse> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getValue<YAxisInverse>(objects, {
-        objectName: 'yAxisInverse',
-        propertyName: 'yAxisInverse',
-    });
-    return objects && value ? value : false;
+export const panelEnum: EnumObject<PanelOptions> = {
+    panel: { displayName: 'Panel', default_: '1' },
 };
 
-export const getYAxisMinMax: GetEnumObjectsValue<YAxisMinMax> = (
-    objects: DataViewObjects,
-) => {
-    const defaultOptions = [
-        ['override', false],
-        ['min', 0],
-        ['max', 100],
-    ];
-    const options = defaultOptions.map(
-        ([propertyName, default_]: [string, any]) => [
-            propertyName,
-            dataViewObjects.getValue(objects, {
-                objectName: 'yAxisMinMax',
-                propertyName,
-            }) || default_,
-        ],
+export const yAxisEnum: EnumObject<YAxisOptions> = {
+    align: { displayName: 'Align', default_: 'left' },
+    inverse: { displayName: 'Inverse', default_: false },
+    mmOverride: { displayName: 'Min/Max Override', default_: false },
+    mmMin: { displayName: 'Min', default_: 0 },
+    mmMax: { displayName: 'Max', default_: 100 },
+};
+
+export const seriesEnum: EnumObject<SeriesOptions> = {
+    color: { displayName: 'Color', default_: '#333333' },
+    area: { displayName: 'Area', default_: false },
+};
+
+export const getDefaultOption = <T>(enumObject: EnumObject<T>): T =>
+    <T>(
+        (<unknown>(
+            Object.fromEntries(
+                Object.entries(enumObject).map(
+                    ([key, value]: [
+                        string,
+                        EnumObject<T>[keyof EnumObject<T>],
+                    ]) => [key, value.default_],
+                ),
+            )
+        ))
     );
-    return objects
-        ? Object.fromEntries(options)
-        : Object.fromEntries(defaultOptions);
-};
 
-export const getColor: GetEnumObjectsValue<Color> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getFillColor(objects, {
-        objectName: 'color',
-        propertyName: 'color',
-    });
-    return objects && value ? value : '#333333';
-};
+const getObjectEnumValues =
+    <T>(objectName: string, enumObject: EnumObject<T>) =>
+    (objects: DataViewObjects): T => {
+        const defaultOptions = Object.entries(getDefaultOption(enumObject));
 
-export const getIsArea: GetEnumObjectsValue<IsArea> = (
-    objects: DataViewObjects,
-) => {
-    const value = dataViewObjects.getValue<IsArea>(objects, {
-        objectName: 'isArea',
-        propertyName: 'isArea',
-    });
-    return objects && value ? value : false;
-};
+        const options = defaultOptions.map(([propertyName, default_]) => [
+            propertyName,
+            dataViewObjects.getValue(objects, { objectName, propertyName }) ||
+                default_,
+        ]);
+
+        return objects
+            ? Object.fromEntries(options)
+            : Object.fromEntries(defaultOptions);
+    };
+
+export const getPanel = getObjectEnumValues('panel', panelEnum);
+
+export const getYAxis = getObjectEnumValues('yAxis', yAxisEnum);
+
+export const getSeries = getObjectEnumValues('series', seriesEnum);
