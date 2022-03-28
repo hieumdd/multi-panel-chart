@@ -48,7 +48,7 @@ type Data = {
 const mapDataView = (dataView: DataView): Data[] => {
     const { columns, rows } = dataView.table;
 
-    const dateValues = <string[]>rows.map((row) => row[0]);
+    const dateValues = rows.map((row) => <string>row[0]);
 
     const dataObjects = dataView.metadata.columns
         .slice(1)
@@ -188,7 +188,7 @@ export class Visual implements IVisual {
 
     constructor(options: VisualConstructorOptions) {
         this.target = options.element;
-        this.chart = echarts.init(this.target, '', {
+        this.chart = echarts.init(this.target, null, {
             renderer: 'svg',
         });
     }
@@ -252,7 +252,7 @@ export class Visual implements IVisual {
                             properties: {
                                 [propsKey]: propsValue,
                             },
-                            displayName: `${displayName[propsKey].displayName} - ${key}`,
+                            displayName: `[${key}] ${displayName[propsKey].displayName}`,
                             selector: {
                                 metadata: queryName,
                             },
@@ -263,24 +263,17 @@ export class Visual implements IVisual {
             return flattenDepth(objectEnums, 1);
         };
 
+        const { legend, axis, tooltip, dataPoint } = this.settings
+
         switch (objectName) {
             case 'legend':
-                return pushObject({
-                    fontSize: this.settings.legend.fontSize,
-                });
+                return pushObject(legend);
             case 'axis':
-                return pushObject({
-                    fontSize: this.settings.axis.fontSize,
-                });
+                return pushObject(axis);
             case 'tooltip':
-                return pushObject({
-                    fontSize: this.settings.tooltip.fontSize,
-                    panelGap: this.settings.tooltip.panelGap,
-                });
+                return pushObject(tooltip);
             case 'dataPoint':
-                return pushObject({
-                    dataPoint: this.settings.dataPoint.dataPoint,
-                });
+                return pushObject(dataPoint);
             case 'panel':
                 return pushObjectEnum(panelEnum, getPanel);
             case 'yAxis':
