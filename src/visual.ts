@@ -142,10 +142,12 @@ const buildOptions = (
 
     const series = Object.entries(seriesData).map(([id, data]) => {
         const [panel, yAxis, key, _] = id.split(chain);
-        const { color, area } = data.reduce(
-            (_, cur) => cur.series,
-            getDefaultOption(seriesEnum),
-        );
+        const {
+            color: {
+                solid: { color },
+            },
+            area,
+        } = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
         return {
             type: 'line',
             symbol: settings.dataPoint.dataPoint ? 'empty-circle' : 'none',
@@ -263,7 +265,7 @@ export class Visual implements IVisual {
             return flattenDepth(objectEnums, 1);
         };
 
-        const { legend, axis, tooltip, dataPoint } = this.settings
+        const { legend, axis, tooltip, dataPoint } = this.settings;
 
         switch (objectName) {
             case 'legend':
@@ -279,13 +281,7 @@ export class Visual implements IVisual {
             case 'yAxis':
                 return pushObjectEnum(yAxisEnum, getYAxis);
             case 'series':
-                return pushObjectEnum(seriesEnum, (objects) => {
-                    const { color, area } = getSeries(objects);
-                    return {
-                        color: { solid: { color } },
-                        area,
-                    };
-                });
+                return pushObjectEnum(seriesEnum, getSeries);
         }
         return [];
     }

@@ -13,7 +13,7 @@ export type YAxisOptions = {
     mmMax: number;
 };
 export type SeriesOptions = {
-    color: string;
+    color: { solid: { color: string } };
     area: boolean;
 };
 
@@ -37,7 +37,7 @@ export const yAxisEnum: EnumObject<YAxisOptions> = {
 };
 
 export const seriesEnum: EnumObject<SeriesOptions> = {
-    color: { displayName: 'Color', default_: '#333333' },
+    color: { displayName: 'Color', default_: { solid: { color: '#333333' } } },
     area: { displayName: 'Area', default_: false },
 };
 
