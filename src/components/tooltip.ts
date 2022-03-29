@@ -23,7 +23,8 @@ const formatter =
                 panel.map(({ seriesName, value, seriesIndex, color }: any) => {
                     const seriesEl = document.createElement('div');
                     seriesEl.className = 'tooltip-series';
-                    seriesEl.style.backgroundColor = color;
+                    seriesEl.style.backgroundColor = `${color}90`;
+                    seriesEl.style.borderColor = color;
                     seriesEl.style.color = getContrastColor(color);
 
                     const labelEl = document.createElement('p');
@@ -65,8 +66,9 @@ const getTooltip = (
 ) => ({
     trigger: 'axis',
     className: 'tooltip-container',
-    backgroundColor: 'rgba(50,50,50,0.0)',
-    extraCssText: 'box-shadow: none;',
+    backgroundColor: 'transparent',
+    extraCssText: 'box-shadow: none; border: none',
+    padding: 0,
     axisPointer: {
         type: 'cross',
     },
