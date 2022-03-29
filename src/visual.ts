@@ -150,7 +150,8 @@ const buildOptions = (
         } = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
         return {
             type: 'line',
-            symbol: settings.dataPoint.dataPoint ? 'empty-circle' : 'none',
+            symbol: settings.dataPoint.dataPoint ? 'emptyCircle' : 'none',
+            step: true,
             name: `${panel} - ${key}`,
             xAxisId: panel,
             yAxisId: `${panel}-${yAxis}`,
