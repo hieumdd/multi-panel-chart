@@ -69,9 +69,9 @@ const getTooltip = (
     axisPointer: {
         type: 'cross',
     },
-    position: (pos, params, el, elRect, size) => ({
+    position: (pos) => ({
         top: '5%',
-        [['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]]: '10%',
+        left: pos[0],
     }),
     formatter: formatter(seriesValueFormatters, fontSize, panelGap),
 });
