@@ -29,7 +29,6 @@ const formatter =
                     const labelEl = document.createElement('p');
                     labelEl.innerHTML = `${seriesName}`;
                     labelEl.style.fontSize = `${fontSize}px`;
-                    labelEl.style.fontWeight = '400';
 
                     const valueEl = document.createElement('p');
                     valueEl.innerHTML = `${
@@ -37,7 +36,6 @@ const formatter =
                         '-'
                     }`;
                     valueEl.style.fontSize = `${fontSize}px`;
-                    valueEl.style.fontWeight = '600';
 
                     [labelEl, valueEl].forEach((el) =>
                         seriesEl.appendChild(el),
