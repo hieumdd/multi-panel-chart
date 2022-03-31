@@ -106,13 +106,17 @@ const buildOptions = (
         right: '20%',
     }));
 
-    const xAxis = Object.entries(panelData).map(([id]) => ({
+    const xAxis = Object.entries(panelData).map(([id], i, arr) => ({
         type: 'time',
         id,
         gridId: id,
         axisLine: { show: false },
         axisLabel: {
+            show: i === arr.length - 1 ? true : false,
             fontSize: settings.axis.fontSize,
+        },
+        axisTick: {
+            show: i === arr.length - 1 ? true : false,
         },
     }));
 
