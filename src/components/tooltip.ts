@@ -23,8 +23,7 @@ const formatter =
                 panel.map(({ seriesName, value, seriesIndex, color }: any) => {
                     const seriesEl = document.createElement('div');
                     seriesEl.className = 'tooltip-series';
-                    seriesEl.style.backgroundColor = `${color}90`;
-                    seriesEl.style.borderColor = color;
+                    seriesEl.style.backgroundColor = `${color}`;
                     seriesEl.style.color = getContrastColor(color);
 
                     const labelEl = document.createElement('p');
