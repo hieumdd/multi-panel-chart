@@ -23,14 +23,12 @@ const formatter =
                 panel.map(({ seriesName, value, seriesIndex, color }: any) => {
                     const seriesEl = document.createElement('div');
                     seriesEl.className = 'tooltip-series';
-                    seriesEl.style.backgroundColor = `${color}90`;
-                    seriesEl.style.borderColor = color;
+                    seriesEl.style.backgroundColor = `${color}`;
                     seriesEl.style.color = getContrastColor(color);
 
                     const labelEl = document.createElement('p');
                     labelEl.innerHTML = `${seriesName}`;
                     labelEl.style.fontSize = `${fontSize}px`;
-                    labelEl.style.fontWeight = '400';
 
                     const valueEl = document.createElement('p');
                     valueEl.innerHTML = `${
@@ -38,7 +36,6 @@ const formatter =
                         '-'
                     }`;
                     valueEl.style.fontSize = `${fontSize}px`;
-                    valueEl.style.fontWeight = '600';
 
                     [labelEl, valueEl].forEach((el) =>
                         seriesEl.appendChild(el),
