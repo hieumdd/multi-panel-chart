@@ -36,7 +36,8 @@ import formatter, { defaultFormat } from './components/formatter';
 
 type Data = {
     id: string;
-    date: Date;
+    // date: Date;
+    group: any;
     key: string;
     value: number;
     panel: PanelOptions;
@@ -48,18 +49,30 @@ type Data = {
 const mapDataView = (dataView: DataView): Data[] => {
     const { columns, rows } = dataView.table;
 
-    const dateValues = rows.map((row) => <string>row[0]);
+    const groupRoleIndex = columns.findIndex((col) => col.roles.group === true);
+
+    const dataFilter = (_: any, i: number) => i !== groupRoleIndex;
+
+    const groupValues = rows
+        .map((row) => row[groupRoleIndex])
+        .map((row) => ({
+            group: row,
+            type: columns[groupRoleIndex].type,
+        }));
 
     const dataObjects = dataView.metadata.columns
-        .slice(1)
-        .map(({ format, objects }) => ({ format, objects }));
+        .filter(dataFilter)
+        .map(({ format, objects }) => ({
+            format,
+            objects,
+        }));
 
     const dataValues = rows
-        .map((row) => <number[]>row.slice(1))
+        .map((row) => <number[]>row.filter(dataFilter))
         .map((row) =>
             zip(
                 columns
-                    .slice(1)
+                    .filter(dataFilter)
                     .map((column) => [
                         Object.keys(column.roles)[0],
                         column.displayName,
@@ -68,10 +81,11 @@ const mapDataView = (dataView: DataView): Data[] => {
             ).map(([[id, key], value]) => ({ id, key, value })),
         );
 
-    const matchedData = zip(dateValues, dataValues).map(([date, values]) =>
+    const matchedData = zip(groupValues, dataValues).map(([group, values]) =>
         zip(values, dataObjects).map(([value, { format, objects }]) => ({
             ...value,
-            date: new Date(date),
+            group: group.group,
+            groupType: group.type,
             panel: getPanel(objects),
             yAxis: getYAxis(objects),
             series: getSeries(objects),
@@ -159,7 +173,7 @@ const buildOptions = (
             name: `${panel} - ${key}`,
             xAxisId: panel,
             yAxisId: `${panel}-${yAxis}`,
-            data: data.map(({ date, value }) => [date, value]),
+            data: data.map(({ group, value }) => [group, value]),
             lineStyle: { color },
             itemStyle: { color },
             areaStyle: area ? { color } : null,

@@ -8,10 +8,10 @@ const getAxisPointer = (format: string) => ({
     },
     label: {
         backgroundColor: '#777',
-        formatter: ({ axisDimension, value }: any) =>
-            axisDimension === 'x'
-                ? formatter(format).format(dayjs(value).toDate())
-                : defaultFormatter.format(value),
+        // formatter: ({ axisDimension, value }: any) =>
+        //     axisDimension === 'x'
+        //         ? formatter(format).format(dayjs(value).toDate())
+        //         : defaultFormatter.format(value),
     },
 });
 
