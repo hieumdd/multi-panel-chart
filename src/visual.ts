@@ -166,6 +166,7 @@ const buildOptions = (
             },
             area,
         } = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
+        
         return {
             type: 'line',
             symbol: settings.dataPoint.dataPoint ? 'emptyCircle' : 'none',
