@@ -112,13 +112,22 @@ const buildOptions = (
         [panel.panel, yAxis.align, key, valueFormat].join(chain),
     );
 
-    const grid = Object.entries(panelData).map(([id], i, arr) => ({
-        id,
-        top: `${i * (90 / arr.length) + 5}%`,
-        height: `${90 / arr.length - 5}%`,
-        left: '5%',
-        right: '20%',
-    }));
+    const panelHeights = ['height1', 'height2', 'height3', 'height4', 'height5']
+        .map((h) => settings.staticPanel[h])
+        .map((h) => (h ? h * 0.9 : 0));
+
+    const grid = Object.entries(panelData).map(([id], i) => {
+        const prev = panelHeights
+            .slice(0, i)
+            .reduce((acc, cur) => acc + cur, 0);
+        return {
+            id,
+            top: `${prev + 5}%`,
+            height: `${panelHeights[i]}%`,
+            left: '5%',
+            right: '20%',
+        };
+    });
 
     const xAxis = Object.entries(panelData).map(([id], i, arr) => ({
         type: 'time',
@@ -166,7 +175,7 @@ const buildOptions = (
             },
             area,
         } = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
-        
+
         return {
             type: 'line',
             symbol: settings.dataPoint.dataPoint ? 'emptyCircle' : 'none',
@@ -258,7 +267,7 @@ export class Visual implements IVisual {
         const pushObjectEnum = <T>(
             displayName: EnumObject<T>,
             propertiesFn: (
-                DataViewObjects,
+                obj: DataViewObjects,
             ) => VisualObjectInstance['properties'],
         ) => {
             const dataWithObjects = zip(
@@ -285,7 +294,7 @@ export class Visual implements IVisual {
             return flattenDepth(objectEnums, 1);
         };
 
-        const { legend, axis, tooltip, dataPoint } = this.settings;
+        const { legend, axis, tooltip, dataPoint, staticPanel } = this.settings;
 
         switch (objectName) {
             case 'legend':
@@ -296,6 +305,8 @@ export class Visual implements IVisual {
                 return pushObject(tooltip);
             case 'dataPoint':
                 return pushObject(dataPoint);
+            case 'staticPanel':
+                return pushObject(staticPanel);
             case 'panel':
                 return pushObjectEnum(panelEnum, getPanel);
             case 'yAxis':
