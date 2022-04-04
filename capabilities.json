@@ -2,7 +2,7 @@
     "dataRoles": [
         {
             "displayName": "Date",
-            "name": "date",
+            "name": "group",
             "kind": "Grouping"
         },
         {
@@ -16,6 +16,9 @@
             ]
         }
     ],
+    "drilldown": {
+        "roles": ["group"]
+    },
     "objects": {
         "legend": {
             "displayName": "Legend",
@@ -140,7 +143,7 @@
         {
             "conditions": [
                 {
-                    "date": {
+                    "group": {
                         "max": 1
                     },
                     "measures": {}
@@ -151,7 +154,7 @@
                     "select": [
                         {
                             "bind": {
-                                "to": "date"
+                                "to": "group"
                             }
                         },
                         {
