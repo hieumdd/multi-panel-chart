@@ -28,6 +28,12 @@
                     "type": {
                         "numeric": true
                     }
+                },
+                "spacing": {
+                    "displayName": "Spacing",
+                    "type": {
+                        "numeric": true
+                    }
                 }
             }
         },

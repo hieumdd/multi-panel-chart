@@ -195,7 +195,7 @@ const buildOptions = (
     );
 
     return {
-        legend: getLegend(settings.legend.fontSize),
+        legend: getLegend(settings.legend.fontSize, settings.legend.spacing),
         tooltip: getTooltip(
             valueFormatters,
             settings.tooltip.fontSize,
