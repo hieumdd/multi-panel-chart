@@ -70,6 +70,41 @@
                 }
             }
         },
+        "staticPanel": {
+            "displayName": "Panel Height",
+            "properties": {
+                "height1": {
+                    "displayName": "Height 1",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "height2": {
+                    "displayName": "Height 2",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "height3": {
+                    "displayName": "Height 3",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "height4": {
+                    "displayName": "Height 4",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "height5": {
+                    "displayName": "Height 5",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
         "panel": {
             "displayName": "Panels",
             "properties": {

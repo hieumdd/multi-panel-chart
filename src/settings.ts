@@ -18,9 +18,18 @@ export class DataPointSettings {
     public dataPoint: boolean = false;
 }
 
+export class StaticPanelSettings {
+    public height1: number = 20;
+    public height2: number = 20;
+    public height3: number = 20;
+    public height4: number = 20;
+    public height5: number = 20;
+}
+
 export class VisualSettings extends DataViewObjectsParser {
     public legend: LegendSettings = new LegendSettings();
     public axis: AxisSettings = new AxisSettings();
     public tooltip: TooltipSettings = new TooltipSettings();
     public dataPoint: DataPointSettings = new DataPointSettings();
+    public staticPanel: StaticPanelSettings = new StaticPanelSettings();
 }
