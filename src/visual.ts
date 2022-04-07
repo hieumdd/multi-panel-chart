@@ -179,7 +179,6 @@ const buildOptions = (
         return {
             type: 'line',
             symbol: settings.dataPoint.dataPoint ? 'emptyCircle' : 'none',
-            step: true,
             name: `${panel} - ${key}`,
             xAxisId: panel,
             yAxisId: `${panel}-${yAxis}`,
