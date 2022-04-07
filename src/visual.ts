@@ -123,7 +123,7 @@ const buildOptions = (
         return {
             id,
             top: `${prev + 5}%`,
-            height: `${panelHeights[i]}%`,
+            height: `${panelHeights[i] - 5}%`,
             left: '5%',
             right: '20%',
         };
