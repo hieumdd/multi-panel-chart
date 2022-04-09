@@ -12,7 +12,7 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import { groupBy, zip, flattenDepth, isEmpty } from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty, sortBy } from 'lodash-es';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
@@ -36,7 +36,6 @@ import formatter, { defaultFormat } from './components/formatter';
 
 type Data = {
     id: string;
-    // date: Date;
     group: any;
     key: string;
     value: number;
@@ -44,6 +43,12 @@ type Data = {
     yAxis: YAxisOptions;
     series: SeriesOptions;
     valueFormat: string;
+};
+
+type DataViewMetadataColumn = powerbi.DataViewMetadataColumn & {
+    rolesIndex: {
+        [key: string]: number[];
+    };
 };
 
 const mapDataView = (dataView: DataView): Data[] => {
@@ -62,9 +67,10 @@ const mapDataView = (dataView: DataView): Data[] => {
 
     const dataObjects = dataView.metadata.columns
         .filter(dataFilter)
-        .map(({ format, objects }) => ({
+        .map(({ format, objects, rolesIndex }: DataViewMetadataColumn) => ({
             format,
             objects,
+            rolesIndex: rolesIndex.measures[0],
         }));
 
     const dataValues = rows
@@ -82,18 +88,23 @@ const mapDataView = (dataView: DataView): Data[] => {
         );
 
     const matchedData = zip(groupValues, dataValues).map(([group, values]) =>
-        zip(values, dataObjects).map(([value, { format, objects }]) => ({
-            ...value,
-            group: group.group,
-            groupType: group.type,
-            panel: getPanel(objects),
-            yAxis: getYAxis(objects),
-            series: getSeries(objects),
-            valueFormat: format || defaultFormat,
-        })),
+        zip(values, dataObjects).map(
+            ([value, { format, objects, rolesIndex }]) => ({
+                ...value,
+                group: group.group,
+                groupType: group.type,
+                rolesIndex,
+                panel: getPanel(objects),
+                yAxis: getYAxis(objects),
+                series: getSeries(objects),
+                valueFormat: format || defaultFormat,
+            }),
+        ),
     );
 
-    return flattenDepth(matchedData, 1);
+    const flattenedData = flattenDepth(matchedData, 1);
+
+    return sortBy(flattenedData, ({ rolesIndex }) => rolesIndex);
 };
 
 const buildOptions = (
