@@ -1,7 +1,7 @@
 import { valueFormatter } from 'powerbi-visuals-utils-formattingutils';
 import IValueFormatter = valueFormatter.IValueFormatter;
 
-import { groupBy } from 'lodash-es';
+import { groupBy } from 'lodash';
 
 import { TooltipSettings } from '../settings';
 
