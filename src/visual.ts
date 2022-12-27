@@ -117,7 +117,7 @@ const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string
             top: `${prev + 5}%`,
             height: `${panelHeights[i] - 5}%`,
             left: '5%',
-            right: '20%',
+            right: `${settings.legend.width}%`,
         };
     });
 

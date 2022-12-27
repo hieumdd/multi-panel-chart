@@ -25,13 +25,19 @@
             "displayName": "Legend",
             "properties": {
                 "fontSize": {
-                    "displayName": "Font Size",
+                    "displayName": "Font Size (px)",
                     "type": {
                         "numeric": true
                     }
                 },
                 "spacing": {
-                    "displayName": "Spacing",
+                    "displayName": "Spacing (px)",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "width": {
+                    "displayName": "Width (%)",
                     "type": {
                         "numeric": true
                     }
@@ -42,7 +48,7 @@
             "displayName": "Axis",
             "properties": {
                 "fontSize": {
-                    "displayName": "Font Size",
+                    "displayName": "Font Size (px)",
                     "type": {
                         "numeric": true
                     }
@@ -93,31 +99,31 @@
             "displayName": "Panel Height",
             "properties": {
                 "height1": {
-                    "displayName": "Height 1",
+                    "displayName": "Height 1 (%)",
                     "type": {
                         "numeric": true
                     }
                 },
                 "height2": {
-                    "displayName": "Height 2",
+                    "displayName": "Height 2 (%)",
                     "type": {
                         "numeric": true
                     }
                 },
                 "height3": {
-                    "displayName": "Height 3",
+                    "displayName": "Height 3 (%)",
                     "type": {
                         "numeric": true
                     }
                 },
                 "height4": {
-                    "displayName": "Height 4",
+                    "displayName": "Height 4 (%)",
                     "type": {
                         "numeric": true
                     }
                 },
                 "height5": {
-                    "displayName": "Height 5",
+                    "displayName": "Height 5 (%)",
                     "type": {
                         "numeric": true
                     }
