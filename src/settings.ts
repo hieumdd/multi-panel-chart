@@ -4,6 +4,7 @@ import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 export class LegendSettings {
     public fontSize: number = 12;
     public spacing: number = 10;
+    public width: number = 20;
 }
 
 export class AxisSettings {
