@@ -9,6 +9,7 @@
         "max-func-body-length": false,
         "no-inner-html": false,
         "export-name": false,
-        "import-name": false
+        "import-name": false,
+        "prefer-type-cast": false
     }
 }

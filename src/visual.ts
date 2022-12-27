@@ -13,25 +13,22 @@ import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
 import { groupBy, zip, flattenDepth, isEmpty, sortBy } from 'lodash-es';
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 
 import { VisualSettings } from './settings';
-import getTooltip from './components/tooltip';
-import getLegend from './components/legend';
-import getAxisPointer from './components/axisPointer';
+import { getTooltip } from './components/tooltip';
+import { getLegend } from './components/legend';
+import { getAxisPointer } from './components/axis-pointer';
 import {
     EnumObject,
     PanelOptions,
-    panelEnum,
     YAxisOptions,
-    yAxisEnum,
     SeriesOptions,
+    panelEnum,
+    yAxisEnum,
     seriesEnum,
-    getDefaultOption,
-    getPanel,
-    getYAxis,
-    getSeries,
-} from './enumObjects';
+} from './options.enum';
+import { getDefaultOption, getPanel, getYAxis, getSeries } from './options.helper';
 import formatter, { defaultFormat } from './components/formatter';
 
 type Data = {
@@ -60,10 +57,7 @@ const mapDataView = (dataView: DataView): Data[] => {
 
     const groupValues = rows
         .map((row) => row[groupRoleIndex])
-        .map((row) => ({
-            group: row,
-            type: columns[groupRoleIndex].type,
-        }));
+        .map((row) => ({ group: row, type: columns[groupRoleIndex].type }));
 
     const dataObjects = dataView.metadata.columns
         .filter(dataFilter)
@@ -79,27 +73,22 @@ const mapDataView = (dataView: DataView): Data[] => {
             zip(
                 columns
                     .filter(dataFilter)
-                    .map((column) => [
-                        Object.keys(column.roles)[0],
-                        column.displayName,
-                    ]),
+                    .map((column) => [Object.keys(column.roles)[0], column.displayName]),
                 row,
             ).map(([[id, key], value]) => ({ id, key, value })),
         );
 
     const matchedData = zip(groupValues, dataValues).map(([group, values]) =>
-        zip(values, dataObjects).map(
-            ([value, { format, objects, rolesIndex }]) => ({
-                ...value,
-                group: group.group,
-                groupType: group.type,
-                rolesIndex,
-                panel: getPanel(objects),
-                yAxis: getYAxis(objects),
-                series: getSeries(objects),
-                valueFormat: format || defaultFormat,
-            }),
-        ),
+        zip(values, dataObjects).map(([value, { format, objects, rolesIndex }]) => ({
+            ...value,
+            group: group.group,
+            groupType: group.type,
+            rolesIndex,
+            panel: getPanel(objects),
+            yAxis: getYAxis(objects),
+            series: getSeries(objects),
+            valueFormat: format || defaultFormat,
+        })),
     );
 
     const flattenedData = flattenDepth(matchedData, 1);
@@ -107,18 +96,12 @@ const mapDataView = (dataView: DataView): Data[] => {
     return sortBy(flattenedData, ({ rolesIndex }) => rolesIndex);
 };
 
-const buildOptions = (
-    data: Data[],
-    settings: VisualSettings,
-    dateFormat: string,
-) => {
+const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string) => {
     const chain = '-';
 
     const groupData = (fn: (d: Data) => string | number) => groupBy(data, fn);
     const panelData = groupData(({ panel }) => panel.panel);
-    const axisData = groupData(({ panel, yAxis }) =>
-        [panel.panel, yAxis.align].join(chain),
-    );
+    const axisData = groupData(({ panel, yAxis }) => [panel.panel, yAxis.align].join(chain));
     const seriesData = groupData(({ panel, yAxis, key, valueFormat }) =>
         [panel.panel, yAxis.align, key, valueFormat].join(chain),
     );
@@ -128,9 +111,7 @@ const buildOptions = (
         .map((h) => (h ? h * 0.9 : 0));
 
     const grid = Object.entries(panelData).map(([id], i) => {
-        const prev = panelHeights
-            .slice(0, i)
-            .reduce((acc, cur) => acc + cur, 0);
+        const prev = panelHeights.slice(0, i).reduce((acc, cur) => acc + cur, 0);
         return {
             id,
             top: `${prev + 5}%`,
@@ -171,8 +152,7 @@ const buildOptions = (
             position: align,
             inverse,
             axisLabel: {
-                formatter: (value: number) =>
-                    formatter(valueFormat).format(value),
+                formatter: (value: number) => formatter(valueFormat).format(value),
                 fontSize: settings.axis.fontSize,
             },
         };
@@ -206,11 +186,7 @@ const buildOptions = (
 
     return {
         legend: getLegend(settings.legend.fontSize, settings.legend.spacing),
-        tooltip: getTooltip(
-            valueFormatters,
-            settings.tooltip.fontSize,
-            settings.tooltip.panelGap,
-        ),
+        tooltip: getTooltip(valueFormatters, settings.tooltip.fontSize, settings.tooltip.panelGap),
         axisPointer: getAxisPointer(dateFormat),
         grid,
         xAxis,
@@ -229,22 +205,16 @@ export class Visual implements IVisual {
 
     constructor(options: VisualConstructorOptions) {
         this.target = options.element;
-        this.chart = echarts.init(this.target, null, {
-            renderer: 'svg',
-        });
+        this.chart = echarts.init(this.target, null, { renderer: 'svg' });
     }
 
     public update(options: VisualUpdateOptions) {
-        this.settings = VisualSettings.parse<VisualSettings>(
-            options && options.dataViews && options.dataViews[0],
-        );
+        this.settings = VisualSettings.parse(options && options.dataViews && options.dataViews[0]);
 
         this.dataView = options.dataViews[0];
         this.metadata = this.dataView.metadata;
 
         this.data = mapDataView(this.dataView);
-        console.log(this.settings);
-        console.log(this.data);
 
         if (isEmpty(this.data)) {
             return;
@@ -255,7 +225,6 @@ export class Visual implements IVisual {
             this.settings,
             this.dataView.metadata.columns[0].format,
         );
-        console.log(chartOptions);
 
         this.chart.resize();
         this.chart.setOption(chartOptions, true, true);
@@ -276,31 +245,21 @@ export class Visual implements IVisual {
 
         const pushObjectEnum = <T>(
             displayName: EnumObject<T>,
-            propertiesFn: (
-                obj: DataViewObjects,
-            ) => VisualObjectInstance['properties'],
+            propertiesFn: (obj: DataViewObjects) => VisualObjectInstance['properties'],
         ) => {
             const dataWithObjects = zip(
                 this.metadata.columns.slice(1),
                 Object.entries(groupBy(this.data, ({ key }) => key)),
             );
-            const objectEnums = dataWithObjects.map(
-                ([{ queryName, objects }, [key]]) => {
-                    const props = propertiesFn(objects);
-                    return Object.entries(props).map(
-                        ([propsKey, propsValue]) => ({
-                            objectName,
-                            properties: {
-                                [propsKey]: propsValue,
-                            },
-                            displayName: `[${key}] ${displayName[propsKey].displayName}`,
-                            selector: {
-                                metadata: queryName,
-                            },
-                        }),
-                    );
-                },
-            );
+            const objectEnums = dataWithObjects.map(([{ queryName, objects }, [key]]) => {
+                const props = propertiesFn(objects);
+                return Object.entries(props).map(([propsKey, propsValue]) => ({
+                    objectName,
+                    properties: { [propsKey]: propsValue },
+                    displayName: `[${key}] ${displayName[propsKey].displayName}`,
+                    selector: { metadata: queryName },
+                }));
+            });
             return flattenDepth(objectEnums, 1);
         };
 

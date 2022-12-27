@@ -3,18 +3,16 @@ import IValueFormatter = valueFormatter.IValueFormatter;
 
 import { groupBy } from 'lodash-es';
 
-const getContrastColor = (bgColor: string) =>
-    parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2
-        ? '#333333'
-        : '#ffffff';
+const getContrastColor = (bgColor: string) => {
+    return parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2 ? '#333333' : '#ffffff';
+};
 
-const formatter =
-    (
-        seriesValueFormatters: IValueFormatter[],
-        fontSize: number,
-        panelGap: number,
-    ) =>
-    (i: any) => {
+const formatter = (
+    seriesValueFormatters: IValueFormatter[],
+    fontSize: number,
+    panelGap: number,
+) => {
+    return (i: any) => {
         const tooltipEl = document.createElement('div');
         tooltipEl.className = 'tooltip';
 
@@ -32,14 +30,11 @@ const formatter =
 
                     const valueEl = document.createElement('p');
                     valueEl.innerHTML = `${
-                        seriesValueFormatters[seriesIndex].format(value[1]) ||
-                        '-'
+                        seriesValueFormatters[seriesIndex].format(value[1]) || '-'
                     }`;
                     valueEl.style.fontSize = `${fontSize}px`;
 
-                    [labelEl, valueEl].forEach((el) =>
-                        seriesEl.appendChild(el),
-                    );
+                    [labelEl, valueEl].forEach((el) => seriesEl.appendChild(el));
 
                     return seriesEl;
                 }),
@@ -55,8 +50,9 @@ const formatter =
         tooltipEl.style.gap = `${panelGap}em`;
         return tooltipEl;
     };
+};
 
-const getTooltip = (
+export const getTooltip = (
     seriesValueFormatters: IValueFormatter[],
     fontSize: number,
     panelGap: number,
@@ -66,14 +62,7 @@ const getTooltip = (
     backgroundColor: 'transparent',
     extraCssText: 'box-shadow: none; border: none',
     padding: 0,
-    axisPointer: {
-        type: 'cross',
-    },
-    position: (pos) => ({
-        top: '5%',
-        left: pos[0],
-    }),
+    axisPointer: { type: 'cross' },
+    position: (pos: any) => ({ top: '5%', left: pos[0] }),
     formatter: formatter(seriesValueFormatters, fontSize, panelGap),
 });
-
-export default getTooltip;
