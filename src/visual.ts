@@ -12,7 +12,7 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
-import { groupBy, zip, flattenDepth, isEmpty, sortBy } from 'lodash-es';
+import { groupBy, zip, flattenDepth, isEmpty, sortBy } from 'lodash';
 import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
