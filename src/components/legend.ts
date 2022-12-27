@@ -1,4 +1,6 @@
-export const getLegend = (fontSize: number, itemGap: number) => ({
+import { LegendSettings } from '../settings';
+
+export const getLegend = ({ fontSize, spacing: itemGap }: LegendSettings) => ({
     orient: 'vertical',
     top: '5%',
     right: 'right',

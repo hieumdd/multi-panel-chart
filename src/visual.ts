@@ -29,7 +29,7 @@ import {
     seriesEnum,
 } from './options.enum';
 import { getDefaultOption, getPanel, getYAxis, getSeries } from './options.helper';
-import formatter, { defaultFormat } from './components/formatter';
+import { defaultFormat, formatter } from './components/formatter';
 
 type Data = {
     id: string;
@@ -160,12 +160,9 @@ const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string
 
     const series = Object.entries(seriesData).map(([id, data]) => {
         const [panel, yAxis, key, _] = id.split(chain);
-        const {
-            color: {
-                solid: { color },
-            },
-            area,
-        } = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
+        const style = data.reduce((_, cur) => cur.series, getDefaultOption(seriesEnum));
+
+        const { color } = style.color.solid;
 
         return {
             type: 'line',
@@ -176,7 +173,7 @@ const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string
             data: data.map(({ group, value }) => [group, value]),
             lineStyle: { color },
             itemStyle: { color },
-            areaStyle: area ? { color } : null,
+            areaStyle: style.area ? { color } : null,
         };
     });
 
@@ -185,7 +182,7 @@ const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string
     );
 
     return {
-        legend: getLegend(settings.legend.fontSize, settings.legend.spacing),
+        legend: getLegend(settings.legend),
         tooltip: getTooltip({ valueFormatters, ...settings.tooltip }),
         axisPointer: getAxisPointer(dateFormat),
         grid,
@@ -239,7 +236,7 @@ export class Visual implements IVisual {
             return [];
         }
 
-        const pushObject = (properties: { [key: string]: any }) => [
+        const pushObject = (properties: Record<string, any>) => [
             { objectName, properties, selector: null },
         ];
 
@@ -251,6 +248,7 @@ export class Visual implements IVisual {
                 this.metadata.columns.slice(1),
                 Object.entries(groupBy(this.data, ({ key }) => key)),
             );
+
             const objectEnums = dataWithObjects.map(([{ queryName, objects }, [key]]) => {
                 const props = propertiesFn(objects);
                 return Object.entries(props).map(([propsKey, propsValue]) => ({
@@ -260,6 +258,7 @@ export class Visual implements IVisual {
                     selector: { metadata: queryName },
                 }));
             });
+
             return flattenDepth(objectEnums, 1);
         };
 
@@ -268,21 +267,30 @@ export class Visual implements IVisual {
         switch (objectName) {
             case 'legend':
                 return pushObject(legend);
+
             case 'axis':
                 return pushObject(axis);
+
             case 'tooltip':
                 return pushObject(tooltip);
+
             case 'dataPoint':
                 return pushObject(dataPoint);
+
             case 'staticPanel':
                 return pushObject(staticPanel);
+
             case 'panel':
                 return pushObjectEnum(panelEnum, getPanel);
+
             case 'yAxis':
                 return pushObjectEnum(yAxisEnum, getYAxis);
+
             case 'series':
                 return pushObjectEnum(seriesEnum, getSeries);
+
+            default:
+                return [];
         }
-        return [];
     }
 }
