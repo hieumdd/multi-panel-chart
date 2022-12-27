@@ -3,19 +3,18 @@ import IValueFormatter = valueFormatter.IValueFormatter;
 
 import { groupBy } from 'lodash-es';
 
+import { TooltipSettings } from '../settings';
+
 const getContrastColor = (bgColor: string) => {
     return parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2 ? '#333333' : '#ffffff';
 };
 
-type TooltipOptions = {
+type TooltipOptions = TooltipSettings & {
     valueFormatters: IValueFormatter[];
-    fontSize: number;
-    panelGap: number;
-    opacity: number;
 };
 
 export const getTooltip = (options: TooltipOptions) => {
-    const { valueFormatters, fontSize, panelGap, opacity } = options;
+    const { valueFormatters, fontSize, opacity, panelGap, padding } = options;
 
     const formatter = (i: any) => {
         const tooltipEl = document.createElement('div');
@@ -27,8 +26,9 @@ export const getTooltip = (options: TooltipOptions) => {
                     const seriesEl = document.createElement('div');
                     seriesEl.className = 'tooltip-series';
                     seriesEl.style.backgroundColor = `${color}`;
-                    seriesEl.style.opacity = `${opacity}%`;
                     seriesEl.style.color = getContrastColor(color);
+                    seriesEl.style.opacity = `${opacity}%`;
+                    seriesEl.style.padding = `${padding}px`;
 
                     const labelEl = document.createElement('p');
                     labelEl.innerHTML = `${seriesName}`;

@@ -12,8 +12,9 @@ export class AxisSettings {
 
 export class TooltipSettings {
     public fontSize: number = 12;
-    public panelGap: number = 64;
     public opacity: number = 100;
+    public panelGap: number = 64;
+    public padding: number = 1;
 }
 
 export class DataPointSettings {

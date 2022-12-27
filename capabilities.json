@@ -52,7 +52,13 @@
             "displayName": "Tooltip",
             "properties": {
                 "fontSize": {
-                    "displayName": "Font Size",
+                    "displayName": "Font Size (px)",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "opacity": {
+                    "displayName": "Opacity (%)",
                     "type": {
                         "numeric": true
                     }
@@ -63,8 +69,8 @@
                         "numeric": true
                     }
                 },
-                "opacity": {
-                    "displayName": "Opacity (%)",
+                "padding": {
+                    "displayName": "Padding (px)",
                     "type": {
                         "numeric": true
                     }
