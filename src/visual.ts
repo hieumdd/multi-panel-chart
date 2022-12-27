@@ -13,7 +13,7 @@ import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 
 import { groupBy, zip, flattenDepth, isEmpty, sortBy } from 'lodash-es';
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 
 import { VisualSettings } from './settings';
 import { getTooltip } from './components/tooltip';
@@ -186,7 +186,7 @@ const buildOptions = (data: Data[], settings: VisualSettings, dateFormat: string
 
     return {
         legend: getLegend(settings.legend.fontSize, settings.legend.spacing),
-        tooltip: getTooltip(valueFormatters, settings.tooltip.fontSize, settings.tooltip.panelGap),
+        tooltip: getTooltip({ valueFormatters, ...settings.tooltip }),
         axisPointer: getAxisPointer(dateFormat),
         grid,
         xAxis,

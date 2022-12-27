@@ -58,7 +58,13 @@
                     }
                 },
                 "panelGap": {
-                    "displayName": "Panel Gap (em)",
+                    "displayName": "Panel Gap (px)",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "opacity": {
+                    "displayName": "Opacity (%)",
                     "type": {
                         "numeric": true
                     }
